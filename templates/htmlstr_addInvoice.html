@@ -1,0 +1,108 @@
+<div id="addInvoice-container" class="row">
+	<div class="col-sm-8 leftPane">
+		<div class="row">
+			<div class="col-sm-6 labelInput">
+				<label>Invoice No:</label><input class="inputBox" type='text'/>
+			</div>
+			<div class="col-sm-6 labelInput">
+				<label>Date:</label>
+				<input type="text" id="date" class="inputBox"></input>
+			      <span class="add-on">
+			        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+			      </span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 labelInput">
+				<label>Dealer:</label><input class="inputBox" type='text'/>
+			</div>
+			<div class="col-sm-6 labelInput">
+				<label>ID:</label><label>D1</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 labelInput">
+				<label>Amount:</label><input class="inputBox" type='text' value="12000"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-10 itemListContainer">
+				<table class="itemListTable">
+					<colgroup>
+						<col style="width: 70px">
+						<col style="width: 330px">
+						<col style="width: 140px">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>S.N</th>
+							<th>Items</th>
+							<th>Nos</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="text" value="1" disabled/></td>
+							<td><input type="text" class="newItem"/></td>
+							<td><input type="text"/></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 labelInput">
+				<label>Amount:</label><label class="actualAmt">12000</label>
+			</div>
+			<div class="clearfix"></div>
+			<div class="col-sm-6 labelInput">
+				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='text' value="4000"/>
+			</div>
+			<div class="clearfix"></div>
+			<div class="col-sm-6 labelInput">
+				<label>Balance Amount:</label><label class="dueAmt">8000</label>
+			</div>			
+		</div>
+		<div class="row submitBtnContainer">
+		<input type="button" value="Add Invoice"/>
+		</div>
+	</div>
+	<div class="col-sm-4 rightPane">
+		<div class="row">
+			<div class="item-image">
+				<img class="center-block" src="/images/default.jpg">
+			</div>
+		</div>
+		<div class="row">
+			<div id="dealerHistoryContainer">
+				<table class="">
+					<colgroup>
+						<col style="width: 30px">
+						<col style="width: 100px">
+						<col style="width: 100px">
+						<col style="width: 70px">
+						<col style="width: 10px">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>S.N</th>
+							<th>Date</th>
+							<th>Invoice No</th>
+							<th>Amount</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

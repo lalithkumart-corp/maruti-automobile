@@ -1,0 +1,45 @@
+I have enhanced Date Picker by including these scripts 
+
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen"
+     href="http://tarruda.github.com/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css">
+	
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.pt-BR.js"></script>
+
+
+
+I have converted these online url's to My Offline file saved in my WWorkspace and linked in my Html.
+
+
+
+
+
+SEE BELOW FOR CLARIFICATION
+These below are original url for libraries:
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen"
+     href="http://tarruda.github.com/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css">
+	
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.pt-BR.js"></script>
+
+
+I have downloaded these libraries and stored in respective paths and linked in HTML page as below
+
+    <script src="/lib/customDateField/js/bootstrap.min.js"></script>
+	<script src="/lib/customDateField/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="/lib/customDateField/js/bootstrap-datetimepicker.pt-BR.js"></script>
+	<link rel="stylesheet" type="text/css" href="/lib/customDateField/css/bootstrap-combined.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/lib/customDateField/css/bootstrap-datetimepicker.min.css"/>
+
+
+
+==========================================================================================
+Removed above files....Used new Plugin
+1. Downloaded jqueryUI.js , jqueryui.css, 1 image
+2. $('#myDateBox').datepicker();

@@ -1,0 +1,58 @@
+#addInvoice-container{
+	width: 975px;
+    margin: 0 auto;
+    background-color: aliceblue;
+}
+.inputBox{
+
+}
+#addInvoice-container .leftPane{
+	border-right: 1px solid;
+}
+#addInvoice-container .leftPane .row{
+	padding-top: 10px;
+}
+.labelInput label{
+	width: 100px;
+}
+#addInvoice-container .itemListContainer{
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border: 1px solid;
+	border-radius: 4px;
+	height: 170px;
+	padding: 0px;
+	margin-left: 15px;
+	background-color: white;
+}
+#addInvoice-container .itemListTable thead{
+	color: white;
+	background-color: rgba(0, 0, 255, 0.55);
+}
+#addInvoice-container .itemListTable{
+	width: 100%;
+	margin-left: 1px;
+}
+#addInvoice-container .itemListTable tbody input{
+	width: 100%;
+	border: none;
+}
+#addInvoice-container .itemListTable tr{
+	height: 27px;
+}
+#addInvoice-container .itemListTable input[disabled]{
+	background-color: white;
+}
+#addInvoice-container .actualAmt,
+#addInvoice-container .paidAmt,
+#addInvoice-container .dueAmt{
+	padding-left: 6px;
+}
+#addInvoice-container .submitBtnContainer{
+	text-align: center;
+	margin: 20px 0px;
+}
+#dealerHistoryContainer{
+	padding-left: 10px;
+	margin-top: 20px;
+}
