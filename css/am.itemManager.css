@@ -1,0 +1,48 @@
+#item_manager_main_container .filterInput{
+	width: 100% !important;
+}
+#item_manager_main_container .inputContainer{
+	text-align: center;
+}
+#item_manager_main_container tr.anItemSelected{
+	background-color: lightgrey;
+}
+#item_manager_main_container .original{
+	border: 5px solid #f19f4e;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+#item_manager_main_container .local{
+	border: 5px solid yellow;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+#item_manager_main_container span.hiddenoriginal, #item_manager_main_container span.hiddenlocal {
+    display: none;
+}
+#item_manager_main_container .edit-selected-item, #item_manager_main_container .delete-selected-item{
+	height: 20px;
+	padding-left: 10px;
+	vertical-align: top;
+	cursor: pointer;
+}
+#item_manager_main_container .edit-selected-item.disabled, #item_manager_main_container .delete-selected-item.disabled{
+	opacity: 0.2;
+}
+.editItemDetailsPopup{
+	top: calc(50% - 125px);
+	left: calc(50% - 250px);
+	padding: 15px;
+}
+.editItemDetailsPopup label, .editItemDetailsPopup input[type="text"]{
+	width: 20%;
+	margin-top: 10px;
+}
+.editItemDetailsPopup input.extraWidth{
+	width: 50%;
+}
+.editItemDetailsPopup .commonModalBodyDiv{
+	height: 230px !important;
+}

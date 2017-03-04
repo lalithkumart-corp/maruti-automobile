@@ -1,0 +1,31 @@
+.commonModalContainer{
+	position: fixed;
+	z-index: 1004;
+	background-color: white;
+	width: 500px;
+}
+#commonModalHeaderDiv{
+	height: 24px;
+	text-align: center;
+	font-size: 17px;
+}
+#commonModalBodyDiv{
+	height: 200px;
+}
+.commonModalFooterDiv{
+	text-align: center;
+}
+.customerCidPopup table thead th{
+	text-align: center;
+}
+.commonModal_overlay{
+    position: fixed;
+    top: 0;
+    height: 100% !important;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1003;
+    background: transparent url(/images/overlay-pixel.png) 0 0 repeat;
+    display: none;
+}

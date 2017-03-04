@@ -1,0 +1,57 @@
+.msgModal_overlay{
+    display: none;
+    position: fixed;
+    top: 0;
+    height: 100% !important;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1003;
+    background: transparent url(/images/overlay-pixel.png) 0 0 repeat;
+    display: none;
+}
+.msgModalContainer{
+    display: none;
+    margin: 0 auto;
+    width: 500px;
+    height: auto;
+    background-color: white;
+    z-index: 10005;
+    display: block;
+    position: fixed;
+    top: calc(50% - 85px);
+    left: calc(50% - 250px);
+    outline: 15px solid rgb(181, 172, 172);
+}
+.msgModalContainer .error{
+    color: red;
+}
+#msgHeaderDiv{
+    padding-top: 10px;
+    padding-left: 10px;
+    font-size: 17px;
+    font-weight: bold;
+}
+#msgBodyDiv{
+    padding: 0px 10px 10px 10px;
+}
+#msgFooterDiv{
+    height: 50px;
+    text-align: right;
+    padding-right: 20px;
+    padding-left: 30px;
+    padding-top: 10px;
+}
+#msgFooterDiv input[type="button"]{
+    padding: 4px 10px 4px 10px;
+    background-color: rgba(45, 108, 239, 0.67);
+    border: none;
+    font-size: 17px;
+    margin-right: 10px;
+    border-radius: 2px;
+}
+#msgFooterDiv input[type="button"]:hover,
+#msgFooterDiv input[type="button"]:focus{
+    border: 2px solid;
+    border-radius: 2px;
+}

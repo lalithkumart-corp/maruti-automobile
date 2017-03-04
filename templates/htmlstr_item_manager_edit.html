@@ -1,0 +1,8 @@
+<div>
+	<label>Item No: </label><input type="text" value="<%= anItem.itemNumber%>"/></br>
+	<label>Part No: </label><input type="text" value="<%= anItem.partNumber%>"/></br>
+	<label>Company: </label><input type="text" value="<%= anItem.company%>"/></br>
+	<label>Item Name: </label><input type="text" class="extraWidth" value="<%= anItem.itemName%>"/></br>
+	<label>Original?: </label><input type="checkbox" <% if(anItem.quality){ %>checked<%}%>/></br>
+	<label>Price: </label><input type="text" value="<%= anItem.price%>"/></br>
+</div>

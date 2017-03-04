@@ -16,47 +16,53 @@
 			<div class="col-sm-6 labelInput">
 				<label>Dealer:</label><input class="inputBox" type='text'/>
 			</div>
-			<div class="col-sm-6 labelInput">
+			<!-- <div class="col-sm-6 labelInput">
 				<label>ID:</label><label>D1</label>
-			</div>
+			</div> -->
 		</div>
 		<div class="row">
 			<div class="col-sm-6 labelInput">
-				<label>Amount:</label><input class="inputBox" type='text' value="12000"/>
+				<label>Amount:</label><input class="inputBox actualAmt1" type='number' value="12000"/>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-10 itemListContainer">
 				<table class="itemListTable">
 					<colgroup>
-						<col style="width: 70px">
-						<col style="width: 330px">
-						<col style="width: 140px">
+						<col style="width: 50px">
+						<col style="width: 120px">
+						<col style="width: 260px">
+						<col style="width: 30px">
+						<col style="width: 40px">
 					</colgroup>
 					<thead>
 						<tr>
 							<th>S.N</th>
-							<th>Items</th>
+							<th>Brand</th>
+							<th>Items Name</th>
+							<th></th>
 							<th>Nos</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
 							<td><input type="text" value="1" disabled/></td>
-							<td><input type="text" class="newItem"/></td>
+							<td><input type="text" class=""/></td>
+							<td><input type="text" class=""/></td>
+							<td><input type="checkbox"/></td>
 							<td><input type="text"/></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
-		<div class="row">
+		<div id="invoiceAmtDetails" class="row">
 			<div class="col-sm-6 labelInput">
 				<label>Amount:</label><label class="actualAmt">12000</label>
 			</div>
 			<div class="clearfix"></div>
 			<div class="col-sm-6 labelInput">
-				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='text' value="4000"/>
+				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='number' value="4000"/>
 			</div>
 			<div class="clearfix"></div>
 			<div class="col-sm-6 labelInput">

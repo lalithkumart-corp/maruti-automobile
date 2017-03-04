@@ -1,0 +1,72 @@
+<div id="item_manager_main_container">
+	<div class="row inputContainer">
+		<input type="text" placeholder="itemNo" class="newItemNo" />
+		<input type="text" placeholder="partNo" class="newPartNo" />
+		<input type="text" placeholder="company" class="newCompanyName" />
+		<input type="text" placeholder="name" class="newItemName" />
+		<input type="text" placeholder="price" class="newItemPrice" />
+		<input type="checkbox" class="newItemQuality"/>
+		<input type="button" class="addItem" value="Add"/>
+			<label>
+				<img class="edit-selected-item disabled" src="/images/edit-icon.png" title="Edit Selected item details">
+			</label>
+			<label>
+				<img class="delete-selected-item disabled" src="/images/delete-icon.png" title="Delete Selected item">
+			</label>
+	</div>
+	<div class='row'>
+		<div class="col-sm-12 itemListContainer">
+			<table id="item_manager_table">
+				<!-- <colgroup>
+					<col style="width: 50px">
+					<col style="width: 120px">
+					<col style="width: 260px">
+					<col style="width: 30px">
+					<col style="width: 40px">
+				</colgroup> -->
+				<thead>
+					<tr>
+						<th>S.N0</th>
+						<th>ItemNumber</th>
+						<th>Part Number</th>
+						<th>Company</th>
+						<th>Items Name</th>
+						<th>Q*</th>
+						<th>Price</th>
+					</tr>
+					<tr id="filterData">
+						<th></th>
+						<th>Enter Item No...</th>
+						<th>Enter Part No...</th>
+						<th>Enter Company Name...</th>
+						<th>Enter Item Name...</th>
+						<th></th>
+						<th>Enter Price Value...</th>
+					</tr>
+				</thead>
+				<tbody>
+	    	    	<%
+	    	    	var row = 0, my_unique_id=[]; 
+	    	    	_.each(itemData, function(value, index){
+	    	    		if(value.my_unique_id !== '' && value.my_unique_id !== null){
+	    		    		if(my_unique_id.indexOf(value.my_unique_id) == -1){
+	    			    		my_unique_id.push(value.my_unique_id);
+	    			    		row+= 1; %>
+	    			    		<tr>
+	    			    			<td><%= row %></td>
+	    			    			<td><%= value.item_no %></td>
+	    			    			<td><%= value.part_no %></td>
+	    			    			<td><%= value.item_brand %></td>
+	    			    			<td><%= value.item_name %></td>
+	    			    			<td><div class="<%= value.item_quality %>"><span class="hidden<%= value.item_quality %>"><%= value.item_quality %></span></div></td>
+	    			    			<td><%= am.itemManager.getCurrencyFormat(value.item_price) %></td>
+	    			    		</tr>
+	    			    	<% }
+	    	    		} 
+	    	    	});
+	    	    	%>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
