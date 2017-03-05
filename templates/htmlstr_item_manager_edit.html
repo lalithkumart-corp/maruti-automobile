@@ -1,8 +1,13 @@
-<div>
-	<label>Item No: </label><input type="text" value="<%= anItem.itemNumber%>"/></br>
-	<label>Part No: </label><input type="text" value="<%= anItem.partNumber%>"/></br>
-	<label>Company: </label><input type="text" value="<%= anItem.company%>"/></br>
-	<label>Item Name: </label><input type="text" class="extraWidth" value="<%= anItem.itemName%>"/></br>
-	<label>Original?: </label><input type="checkbox" <% if(anItem.quality){ %>checked<%}%>/></br>
-	<label>Price: </label><input type="text" value="<%= anItem.price%>"/></br>
+<div id='editItemPopup'>
+	<label>Item No: </label><input id="<%= anItem.myUniqueId %>" class="updatedItemNo" type="text" value="<%= anItem.itemNumber%>"/></br>
+	<label>Company: </label><input class="updatedCompanyName" type="text" value="<%= anItem.company%>"/></br>
+	<label>Item Name: </label><input class="updatedItemName" type="text" class="extraWidth" value="<%= anItem.itemName%>"/></br>
+	<label>Quality: </label><select class="ui itemQualityDropdown dropdown">
+								  <option value="0" <% if(anItem.quality == '0'){ %>selected<%}%>>Original</option>
+								  <option value="1" <% if(anItem.quality == '1'){ %>selected<%}%>>Other</option>
+							</select>
+							</br>
+	<!-- <input class="updatedItemQuality"type="checkbox" <% if(anItem.quality){ %>checked<%}%>/> -->
+	<label>Price: </label><input class="updatedItemPrice" type="text" value="<%= anItem.price%>"/></br>
+	<div class="msgBox">Saved</div>
 </div>

@@ -1,8 +1,13 @@
+#item_manager_main_container{
+	width: 1000px;
+	margin: 0 auto;
+}
 #item_manager_main_container .filterInput{
 	width: 100% !important;
 }
 #item_manager_main_container .inputContainer{
 	text-align: center;
+	margin-bottom: 10px;
 }
 #item_manager_main_container tr.anItemSelected{
 	background-color: lightgrey;
@@ -13,13 +18,13 @@
     border-radius: 50%;
     margin-bottom: 1px;
 }
-#item_manager_main_container .local{
+#item_manager_main_container .other{
 	border: 5px solid yellow;
     display: inline-block;
     border-radius: 50%;
     margin-bottom: 1px;
 }
-#item_manager_main_container span.hiddenoriginal, #item_manager_main_container span.hiddenlocal {
+#item_manager_main_container span.hiddenoriginal, #item_manager_main_container span.hiddenother {
     display: none;
 }
 #item_manager_main_container .edit-selected-item, #item_manager_main_container .delete-selected-item{
@@ -38,11 +43,48 @@
 }
 .editItemDetailsPopup label, .editItemDetailsPopup input[type="text"]{
 	width: 20%;
-	margin-top: 10px;
+	margin-top: 8px;
 }
 .editItemDetailsPopup input.extraWidth{
 	width: 50%;
 }
 .editItemDetailsPopup .commonModalBodyDiv{
-	height: 230px !important;
+	height: 220px !important;
+}
+#editItemPopup .msgBox{
+	display: none;
+}
+.editItemDetailsPopup .commonModalFooterDiv input{
+	margin: 0px 10px;
+	width: 60px;
+}
+#editItemPopup .msgBox.success{
+	color: #35a535;
+	font-weight: bold;
+	padding-top: 11px;
+}
+#editItemPopup .msgBox.error{
+	color: red;
+	font-weight: bold;
+	padding-top: 11px;
+}
+#item_manager_main_container input[type="button"].addItem{
+	border-radius: 4px;
+    border: none;
+    padding: 4px;
+    width: 50px;
+    margin-left: 10px;
+}
+#item_manager_table_wrapper table thead th{
+	padding: 10px 18px 10px 5px;
+}
+#item_manager_main_container .itemQualityDropdown, #editItemPopup .itemQualityDropdown{
+	border: none;
+	height: 25px;
+}
+#editItemPopup .itemQualityDropdown{
+	width: 98px;
+}
+#item_manager_table_filter input[type=search]{
+	-webkit-appearance: textField;
 }

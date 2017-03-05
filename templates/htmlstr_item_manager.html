@@ -1,11 +1,14 @@
 <div id="item_manager_main_container">
 	<div class="row inputContainer">
-		<input type="text" placeholder="itemNo" class="newItemNo" />
-		<input type="text" placeholder="partNo" class="newPartNo" />
-		<input type="text" placeholder="company" class="newCompanyName" />
-		<input type="text" placeholder="name" class="newItemName" />
-		<input type="text" placeholder="price" class="newItemPrice" />
-		<input type="checkbox" class="newItemQuality"/>
+		<input type="text" placeholder="Item No" class="newItemNo" />
+		<input type="text" placeholder="Company Name" class="newCompanyName" />
+		<input type="text" placeholder="Item Name" class="newItemName" />
+		<input type="text" placeholder="Price" class="newItemPrice" />
+		<!-- <label class="switch"><input type="checkbox" class="newItemQuality" checked/><div class="slider round"></div></label> -->
+		<select class="ui itemQualityDropdown dropdown">
+			  <option value="0">Original</option>
+			  <option value="1">Other</option>
+		</select>
 		<input type="button" class="addItem" value="Add"/>
 			<label>
 				<img class="edit-selected-item disabled" src="/images/edit-icon.png" title="Edit Selected item details">
@@ -15,7 +18,8 @@
 			</label>
 	</div>
 	<div class='row'>
-		<div class="col-sm-12 itemListContainer">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-10 itemListContainer">
 			<table id="item_manager_table">
 				<!-- <colgroup>
 					<col style="width: 50px">
@@ -26,9 +30,8 @@
 				</colgroup> -->
 				<thead>
 					<tr>
-						<th>S.N0</th>
+						<th>S.No</th>
 						<th>ItemNumber</th>
-						<th>Part Number</th>
 						<th>Company</th>
 						<th>Items Name</th>
 						<th>Q*</th>
@@ -37,7 +40,6 @@
 					<tr id="filterData">
 						<th></th>
 						<th>Enter Item No...</th>
-						<th>Enter Part No...</th>
 						<th>Enter Company Name...</th>
 						<th>Enter Item Name...</th>
 						<th></th>
@@ -52,10 +54,9 @@
 	    		    		if(my_unique_id.indexOf(value.my_unique_id) == -1){
 	    			    		my_unique_id.push(value.my_unique_id);
 	    			    		row+= 1; %>
-	    			    		<tr>
+	    			    		<tr id="<%= value.my_unique_id %>">
 	    			    			<td><%= row %></td>
 	    			    			<td><%= value.item_no %></td>
-	    			    			<td><%= value.part_no %></td>
 	    			    			<td><%= value.item_brand %></td>
 	    			    			<td><%= value.item_name %></td>
 	    			    			<td><div class="<%= value.item_quality %>"><span class="hidden<%= value.item_quality %>"><%= value.item_quality %></span></div></td>
@@ -68,5 +69,6 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="col-sm-1"></div>
 	</div>
 </div>

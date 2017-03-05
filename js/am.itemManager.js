@@ -5,13 +5,18 @@ am.itemManager = {
 	selectors:{
 		addItem: '#item_manager_main_container .addItem',
 		newItemNo: '#item_manager_main_container .newItemNo',
-		newPartNo: '#item_manager_main_container .newPartNo',
 		newCompanyName: '#item_manager_main_container .newCompanyName',
 		newItemName: '#item_manager_main_container .newItemName',
-		newItemQuality: '#item_manager_main_container .newItemQuality',
+		//newItemQuality: '#item_manager_main_container .newItemQuality',
+		newItemQuality: '#item_manager_main_container .itemQualityDropdown',
 		newItemPrice: '#item_manager_main_container .newItemPrice',
 		editItem: '#item_manager_main_container .edit-selected-item',
-		deleteItem: '#item_manager_main_container .delete-selected-item'
+		deleteItem: '#item_manager_main_container .delete-selected-item',
+		updatedItemNo: '#editItemPopup .updatedItemNo',
+		updatedCompanyName: '#editItemPopup .updatedCompanyName',
+		updatedItemName: '#editItemPopup .updatedItemName',
+		updatedItemQuality: '#editItemPopup .updatedItemQuality',
+		updatedItemPrice: '#editItemPopup .updatedItemPrice'
 	},
 	init: function(){
 		am.itemManager.getItemList();		
@@ -24,11 +29,12 @@ am.itemManager = {
 		$(sel.editItem).off().on('click', function(e){
 			if($(this).hasClass('disabled'))
 				return;
-			$itemManager.openEditDialogBox();
+			$itemManager.editDialogBox.open();
 		});
 		$(sel.deleteItem).off().on('click', function(e){
 			if($(this).hasClass('disabled'))
 				return;
+			$itemManager.deleteItem.showConfirmation();
 		});
 	},
 	getItemList: function(){
@@ -51,7 +57,7 @@ am.itemManager = {
 	},
 	asDataTable: function(){
 		var $itemManager = am.itemManager;
-		$('#item_manager_table thead tr#filterData th').not(":eq(0), :eq(5)").each( function () {
+		$('#item_manager_table thead tr#filterData th').not(":eq(0), :eq(4)").each( function () {
         	var title = $('#item_manager_table thead tr#filterData th').eq( $(this).index() ).text();
         	var className = title.replace(/\./g, '');
         	className = className.replace(/\s/g, '');
@@ -74,8 +80,7 @@ am.itemManager = {
                       { "sWidth": "4%"},
                       { "sWidth": "10%"},
                       { "sWidth": "10%"},
-                      { "sWidth": "10%"},
-                      { "sWidth": "34%"},
+                      { "sWidth": "30%"},
                       { "sWidth": "2%"},
                       { "sWidth": "10%"}
                     ]
@@ -109,16 +114,15 @@ am.itemManager = {
 		var $itemManager = am.itemManager, sel = $itemManager.selectors;
 		var params = {};
 		params.itemNo = $(sel.newItemNo).val().trim();
-		params.partNo = $(sel.newPartNo).val().trim();
 		params.company = $(sel.newCompanyName).val().trim();
 		params.itemName = $(sel.newItemName).val().trim();
-		params.itemQuality = $(sel.newItemQuality).is(':checked');
+		params.itemQuality = $(sel.newItemQuality).val();
 		params.price = $(sel.newItemPrice).val().trim();
 
-		if(params.itemQuality == true)
+		if(params.itemQuality == '1')
 			params.itemQuality = 'original';
 		else
-			params.itemQuality = 'local';
+			params.itemQuality = 'other';
 
 		if(_.isEmpty(params.itemName) || _.isEmpty(params.price)){
 			am.popup.init({
@@ -144,7 +148,7 @@ am.itemManager = {
 		function addIntoDB(){
 			var obj = {};
 			obj.aQuery= "SELECT * FROM "+am.database.schema+".item_lists";
-			obj.aQuery= 'INSERT into '+am.database.schema+'.item_lists (my_unique_id, part_no, item_no, item_brand, item_name, item_quality, item_price) VALUES ("'+$.now()+'", "'+params.partNo+'", "'+params.itemNo+'", "'+params.company+'", "'+params.itemName+'", "'+params.itemQuality+'", "'+params.price+'")';
+			obj.aQuery= 'INSERT into '+am.database.schema+'.item_lists (my_unique_id, item_no, item_brand, item_name, item_quality, item_price) VALUES ("'+$.now()+'", "'+params.itemNo+'", "'+params.company+'", "'+params.itemName+'", "'+params.itemQuality+'", "'+params.price+'")';
 			var callBackObj = am.core.getCallbackObject();
 			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
 			callBackObj.bind('api_response', function(event, response){
@@ -176,11 +180,6 @@ am.itemManager = {
 			else
 				condition1 = false;
 
-			if(anItem.part_no.toLowerCase() == params.partNo.toLowerCase())
-				condition2 = true;
-			else
-				condition2 = false;
-
 			if(anItem.item_brand.toLowerCase() == params.company.toLowerCase())
 				condition3 = true;
 			else
@@ -201,7 +200,7 @@ am.itemManager = {
 			else
 				condition6 = false;
 
-			if(condition1 && condition2 && condition3 && condition4 && condition5 && condition6){
+			if(condition1 && condition3 && condition4 && condition5 && condition6){
 				alreadyExists = true;
 				return alreadyExists;
 			}
@@ -218,25 +217,105 @@ am.itemManager = {
         }
         return val;
     },
-    openEditDialogBox: function(){
-    	var params = {};
-    	params.itemNumber = $('.anItemSelected td:eq(1)').text();
-    	params.partNumber = $('.anItemSelected td:eq(2)').text();
-    	params.company = $('.anItemSelected td:eq(3)').text();
-    	params.itemName = $('.anItemSelected td:eq(4)').text();
-    		var temp = $('.anItemSelected td:eq(5)').text();
-    		if(temp == 'original')
-    			params.quality = true;
-    		else
-    			params.quality = false;
-   
-    		var temp = $('.anItemSelected td:eq(6)').text();
-    		params.price = temp.replace(/Rs: /g,'');
-    	var options = {};
-    	options.title= "Edit item Details...";
-    	options.body = _.template(template_htmlstr_item_manager_edit, {anItem: params});
-    	options.buttons = ['OK'];
-    	options.className = "editItemDetailsPopup"
-    	am.commonPopup.init(options);
+    editDialogBox:{
+    	bindEvents: function(){
+    		var $itemManager = am.itemManager;
+    		$('#btn0Update').off().on('click', function(e){
+				$itemManager.editDialogBox.update();
+			})
+    	},
+    	open: function(){
+    		var $itemManager = am.itemManager;
+    		var params = {};
+    		params.myUniqueId = $('.anItemSelected').attr('id');
+    		params.itemNumber = $('.anItemSelected td:eq(1)').text();
+    		params.company = $('.anItemSelected td:eq(2)').text();
+    		params.itemName = $('.anItemSelected td:eq(3)').text();
+    			var temp = $('.anItemSelected td:eq(4)').text();
+    			if(temp == 'original')
+    				params.quality = "0";
+    			else
+    				params.quality = "1";
+    		
+    			var temp = $('.anItemSelected td:eq(5)').text();
+    			params.price = temp.replace(/Rs: /g,'');
+    		var options = {};
+    		options.title= "Edit item Details...";
+    		options.body = _.template(template_htmlstr_item_manager_edit, {anItem: params});
+    		options.buttons = ['Update'];
+    		options.className = "editItemDetailsPopup";
+    		options.onShownCallback = $itemManager.editDialogBox.bindEvents;
+    		options.dismissBtnText = 'Close';
+    		am.commonPopup.init(options);
+    	},
+    	update: function(){
+    		var $itemManager = am.itemManager, sel = $itemManager.selectors;
+	    	var myUniqueId = $(sel.updatedItemNo).attr('id');
+	    	var itemNo = $(sel.updatedItemNo).val().trim();
+	    	var companyName = $(sel.updatedCompanyName).val().trim();
+	    	var itemName = $(sel.updatedItemName).val().trim();
+	    	var isChecked = $(sel.updatedItemQuality).is(':checked');
+	    		if(isChecked)
+	    			var quality = 'original';
+	    		else
+	    			var quality = 'other';
+	    	var price = $(sel.updatedItemPrice).val().trim();
+
+	    	var obj = {};
+	        obj.aQuery= 'UPDATE '+am.database.schema+'.item_lists SET item_no = "'+itemNo+'", item_brand = "'+companyName+'", item_name = "'+itemName+'", item_quality = "'+quality+'", item_price = "'+price+'" WHERE my_unique_id = "'+myUniqueId+'"';
+	   	
+			var callBackObj = am.core.getCallbackObject();
+			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+			callBackObj.bind('api_response', function(event, response){
+	        	response = JSON.parse(response);
+	            if(response[0].status == true){
+	                $('#editItemPopup .msgBox').addClass('success').html('Saved Successfully !').fadeIn(500).delay(5000).fadeOut(1000);
+		            $itemManager.getItemList();		
+	            }else{
+	            	$('#editItemPopup .msgBox').addClass('error').html('Unable to Save !').fadeIn(500).delay(5000).fadeOut(1000);
+	            }
+			});
+			am.core.call(request, callBackObj);
+    	}
+    },
+    deleteItem: {
+    	showConfirmation: function(){
+    		 am.popup.init(
+                {
+                 title: 'Confirmation',
+                 desc: 'Are you sure to delete <b>'+ $('.anItemSelected td:eq(2)').text() + ' '+ $('.anItemSelected td:eq(3)').text() +'</b> item details ?' ,
+                 dismissBtnText: 'No',
+                 buttons: ['Yes'],
+                 callbacks: [am.itemManager.deleteItem.confirmDelete]
+                });
+    	},
+    	confirmDelete: function(){
+    		var $itemManager = am.itemManager
+    		var my_unique_id = $('.anItemSelected').attr('id');
+    		var companyName = $('.anItemSelected td:eq(2)').text();
+    		var itemName = $('.anItemSelected td:eq(3)').text();
+    		var obj = {};
+        	obj.aQuery= 'DELETE FROM '+am.database.schema+'.item_lists WHERE my_unique_id = "'+ my_unique_id +'"';
+        	var callBackObj = am.core.getCallbackObject();
+			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+			callBackObj.bind('api_response', function(event, response){
+	        	response = JSON.parse(response);
+	        	if(response[0].status == true){
+	                am.popup.init({
+		               	title: 'Success',
+		   				desc: 'The item <b>'+ companyName +' '+ itemName +'</b> has been removed Successfully !',
+		   				dismissBtnText: 'Ok'
+		            });
+		            $itemManager.getItemList();		
+	            }else{
+	            	am.popup.init({
+		               	title: 'Error',
+		   				desc: 'The item <b>'+ companyName +' '+ itemName +'</b> could not be removed !',
+		   				dismissBtnText: 'Ok'
+		            });
+	            }
+	        });
+	        am.core.call(request, callBackObj);
+    	}
     }
 }
