@@ -2,22 +2,7 @@ if(typeof am == 'undefined'){
     var am = {};
 }
 am.itemManager = {
-	selectors:{
-		addItem: '#item_manager_main_container .addItem',
-		newItemNo: '#item_manager_main_container .newItemNo',
-		newCompanyName: '#item_manager_main_container .newCompanyName',
-		newItemName: '#item_manager_main_container .newItemName',
-		//newItemQuality: '#item_manager_main_container .newItemQuality',
-		newItemQuality: '#item_manager_main_container .itemQualityDropdown',
-		newItemPrice: '#item_manager_main_container .newItemPrice',
-		editItem: '#item_manager_main_container .edit-selected-item',
-		deleteItem: '#item_manager_main_container .delete-selected-item',
-		updatedItemNo: '#editItemPopup .updatedItemNo',
-		updatedCompanyName: '#editItemPopup .updatedCompanyName',
-		updatedItemName: '#editItemPopup .updatedItemName',
-		updatedItemQuality: '#editItemPopup .updatedItemQuality',
-		updatedItemPrice: '#editItemPopup .updatedItemPrice'
-	},
+	selectors:am.sel.getItemManagerSelectors(),
 	init: function(){
 		am.itemManager.getItemList();		
 	},
@@ -25,6 +10,10 @@ am.itemManager = {
 		var $itemManager = am.itemManager, sel = $itemManager.selectors;
 		$(sel.addItem).off().on('click', function(e){
 			$itemManager.addNewItem();
+		});
+		$(sel.addItem).off().on('keydown', function(e){
+			if (event.which == 13)
+				$itemManager.addNewItem();			
 		});
 		$(sel.editItem).off().on('click', function(e){
 			if($(this).hasClass('disabled'))
@@ -36,6 +25,21 @@ am.itemManager = {
 				return;
 			$itemManager.deleteItem.showConfirmation();
 		});
+		$itemManager.bindTraverseEvents();
+	},
+	bindTraverseEvents: function(){
+		var $itemManager = am.itemManager, sel = $itemManager.selectors;
+		$(sel.inputContainer).on('keydown', 'input, select', function(event){
+            var $this = $(event.target);
+            if (event.which == 13) {
+                event.preventDefault();
+                var dataIndex = $this.attr('data-index');
+                if(typeof dataIndex != 'undefined'){
+                    var index = parseFloat(dataIndex);
+                    $('[data-index="' + (index + 1).toString() + '"]').focus();
+                }
+            }
+        });
 	},
 	getItemList: function(){
 		var $itemManager = am.itemManager;
@@ -45,7 +49,8 @@ am.itemManager = {
 		var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
 		callBackObj.bind('api_response', function(event, response){
 			$itemManager.rawItemData = JSON.parse(response);
-			$itemManager.renderTableData();				
+			$itemManager.renderTableData();
+			am.autocompleter.itemManager.init();		
 		});
 		am.core.call(request, callBackObj);
 	},

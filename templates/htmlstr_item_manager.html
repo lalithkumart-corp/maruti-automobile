@@ -1,15 +1,15 @@
 <div id="item_manager_main_container">
 	<div class="row inputContainer">
-		<input type="text" placeholder="Item No" class="newItemNo" />
-		<input type="text" placeholder="Company Name" class="newCompanyName" />
-		<input type="text" placeholder="Item Name" class="newItemName" />
-		<input type="text" placeholder="Price" class="newItemPrice" />
+		<input type="text" placeholder="Item No" class="newItemNo" data-index="1" />
+		<input type="text" placeholder="Company Name" class="newCompanyName" data-index="2" />
+		<input type="text" placeholder="Item Name" class="newItemName" data-index="3" />
+		<input type="text" placeholder="Price" class="newItemPrice" data-index="4" />
 		<!-- <label class="switch"><input type="checkbox" class="newItemQuality" checked/><div class="slider round"></div></label> -->
-		<select class="ui itemQualityDropdown dropdown">
+		<select class="ui itemQualityDropdown dropdown" data-index="5">
 			  <option value="0">Original</option>
 			  <option value="1">Other</option>
 		</select>
-		<input type="button" class="addItem" value="Add"/>
+		<input type="button" class="addItem" value="Add" data-index="6"/>
 			<label>
 				<img class="edit-selected-item disabled" src="/images/edit-icon.png" title="Edit Selected item details">
 			</label>
