@@ -19,7 +19,7 @@
     margin-bottom: 1px;
 }
 #item_manager_main_container .other{
-	border: 5px solid yellow;
+	border: 5px solid #219cec;
     display: inline-block;
     border-radius: 50%;
     margin-bottom: 1px;
@@ -87,4 +87,37 @@
 }
 #item_manager_table_filter input[type=search]{
 	-webkit-appearance: textField;
+}
+#exportItemDetils{
+	background-image: url(/images/export_image.jpg);
+    width: 40px;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+    background-size: 25px;
+    background-position-x: 6px;
+    background-color: transparent;
+    border-color: transparent;
+	vertical-align: middle;
+}
+.exportPickColList{
+	width: 300px;
+    left: calc(50% - 150px);
+    top: 0;
+	padding: 10px;
+}
+.exportPickColList .commonModalBodyDiv{
+	padding-left: 10px;
+}
+.exportPickColList .commonModalBodyDiv label{
+	padding: 5px;
+	cursor: pointer;
+}
+.exportPickColList .commonModalBodyDiv input{
+	cursor: pointer;
+}
+.exportPickColList .commonModalFooterDiv input[type="button"]{
+	margin: 0px 10px;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
 }

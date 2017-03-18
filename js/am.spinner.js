@@ -1,7 +1,7 @@
-if(typeof gs == 'undefined'){
-    var gs = {};
+if(typeof am == 'undefined'){
+    var am = {};
 }
-gs.spinner = {
+am.spinner = {
 	show : function(container, className){
 		//Handle Empty values and undefined type
 		if(container == "" || typeof container == "undefined")

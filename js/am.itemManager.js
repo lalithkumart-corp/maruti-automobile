@@ -11,7 +11,7 @@ am.itemManager = {
 		$(sel.addItem).off().on('click', function(e){
 			$itemManager.addNewItem();
 		});
-		$(sel.addItem).off().on('keydown', function(e){
+		$(sel.addItem).on('keydown', function(e){
 			if (event.which == 13)
 				$itemManager.addNewItem();			
 		});
@@ -61,7 +61,7 @@ am.itemManager = {
 		$itemManager.asDataTable();
 	},
 	asDataTable: function(){
-		var $itemManager = am.itemManager;
+		var $itemManager = am.itemManager, sel = am.sel.getItemManagerSelectors();
 		$('#item_manager_table thead tr#filterData th').not(":eq(0), :eq(4)").each( function () {
         	var title = $('#item_manager_table thead tr#filterData th').eq( $(this).index() ).text();
         	var className = title.replace(/\./g, '');
@@ -103,6 +103,9 @@ am.itemManager = {
 	            $('#btn0OK').prop('disabled', false);
 	        }
         });
+
+		$(sel.inputContainer).append('<input type="button" value="" title="Export" id="exportItemDetils"/>');
+        $itemManager.export.init();
 	},
 	tableComplete: function(){
 		var $itemManager = am.itemManager;
@@ -139,7 +142,7 @@ am.itemManager = {
 			am.popup.init({
 		           	title: 'Already Exists !',
 					desc: 'The item already exists. Give unique item details ! ',
-					dismissBtnText: 'OK'
+					dismissBtnText: 'OK',
 		        });
 		}else{
 			am.popup.init({
@@ -162,14 +165,16 @@ am.itemManager = {
 	                am.popup.init({
 		               	title: 'Success',
 		   				desc: 'The item <b>'+ params.itemName+'</b> has been inserted Successfully !',
-		   				dismissBtnText: 'Ok'
+		   				dismissBtnText: 'Ok',
+		   				onHiddenCallback: $itemManager.setFocus
 		            });
 		            $itemManager.getItemList();		
 	            }else{
 	            	am.popup.init({
 		               	title: 'Error',
 		   				desc: 'The Ornament <b>'+ params.itemName+'</b> could not be Added into item list !',
-		   				dismissBtnText: 'Ok'
+		   				dismissBtnText: 'Ok',
+		   				onHiddenCallback: $itemManager.setFocus
 		            });
 	            }
 	            //am.spinner.hide();						
@@ -222,6 +227,13 @@ am.itemManager = {
         }
         return val;
     },
+    setFocus: function(selector){
+    	var $itemManager = am.itemManager, sel = $itemManager.selectors;
+    	if(selector == undefined || selector == null || selector == '')
+    		selector = sel.newItemNo;
+		debugger;
+		am.utils.setFocus(selector);
+	},
     editDialogBox:{
     	bindEvents: function(){
     		var $itemManager = am.itemManager;
@@ -322,5 +334,19 @@ am.itemManager = {
 	        });
 	        am.core.call(request, callBackObj);
     	}
-    }
+    },
+	export:{
+		init: function(){
+			this.bindExport();
+		},
+		bindExport: function(){
+			var $itemManager = am.itemManager, sel = am.sel.getItemManagerSelectors();
+			$(sel.exportItemDetails).on('click', function(e){
+				var options = {
+					columnList:['Item No', 'Company', 'Item Name', 'Quality', 'Price']
+				}
+				am.export.init(options);
+			});
+		}
+	}
 }

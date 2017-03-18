@@ -16,7 +16,8 @@ am.sel = (function(){
 		updatedCompanyName: '#editItemPopup .updatedCompanyName',
 		updatedItemName: '#editItemPopup .updatedItemName',
 		updatedItemQuality: '#editItemPopup .updatedItemQuality',
-		updatedItemPrice: '#editItemPopup .updatedItemPrice'
+		updatedItemPrice: '#editItemPopup .updatedItemPrice',
+		exportItemDetails: '#exportItemDetils'
 	}
 	function getItemManagerSelectors(){
 		return itemManager;

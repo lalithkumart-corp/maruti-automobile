@@ -47,3 +47,43 @@ body{
 .noBorder{
   border: none;
 }
+.spinner_overlay, .commonModal_overlay{
+    position: fixed;
+    top: 0;
+    height: 100% !important;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1003;
+    background: transparent url(/images/overlay-pixel.png) 0 0 repeat;
+    display: none;
+}
+.spinner-label{
+    top: calc(50% - 25px);
+    left: calc(50% - 80px);
+    position: absolute;
+    z-index: 1004;
+    background-repeat: no-repeat;
+    height: 50px;
+    width: 160px;
+    display: none;
+    border: solid 5px #e9711c;
+    background-color: #ffffff;
+    border: 3px solid #e9711c;
+    background-color: white;
+    border-radius: 5px;
+}
+.spinner-label-image{
+    padding-top: 10px;
+    padding-right: 10px;
+}
+.spinner-loading-msg{
+    float: left;
+    margin-right: 20px;
+    font-size: 18px;
+    padding-top: 12px;
+    padding-left: 20px;
+}
+.cp-hue {
+    margin-top: 10px;
+}

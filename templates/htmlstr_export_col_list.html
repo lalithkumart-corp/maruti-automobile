@@ -1,0 +1,5 @@
+<div>
+    <% _.each(columnList, function(colName, index){ %>
+        <label><input type="checkbox" value="<%= index+1 %>" data-colName="<%= colName%>" checked/> <%= colName %> </label> </br>
+    <% }) %>
+</div>
