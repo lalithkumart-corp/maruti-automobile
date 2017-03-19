@@ -87,3 +87,12 @@ body{
 .cp-hue {
     margin-top: 10px;
 }
+
+.mainMenuBarContainer .dropdown .dropdown-toggle,
+.mainMenuBarContainer .dropdown li{
+    cursor: pointer;
+}
+.mainMenuBarContainer .dropdown-menu li{
+    height: 26px;
+    padding: 5px;
+}

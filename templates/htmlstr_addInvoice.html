@@ -2,7 +2,7 @@
 	<div class="col-sm-8 leftPane">
 		<div class="row">
 			<div class="col-sm-6 labelInput">
-				<label>Invoice No:</label><input class="inputBox" type='text'/>
+				<label>Invoice No:</label><input class="inputBox invoiceNumber" type='text'/>
 			</div>
 			<div class="col-sm-6 labelInput">
 				<label>Date:</label>
@@ -14,7 +14,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-6 labelInput">
-				<label>Dealer:</label><input class="inputBox" type='text'/>
+				<label>Dealer:</label><input class="inputBox dealerName" type='text'/>
 			</div>
 			<!-- <div class="col-sm-6 labelInput">
 				<label>ID:</label><label>D1</label>
@@ -49,11 +49,17 @@
 							<td><input type="text" value="1" disabled/></td>
 							<td><input type="text" class=""/></td>
 							<td><input type="text" class=""/></td>
-							<td><input type="checkbox"/></td>
+							<td><input type="checkbox" checked/></td>
 							<td><input type="text"/></td>
 						</tr>
 					</tbody>
 				</table>
+			</div>
+		</div>
+		<div>
+			<input type='button' data-toggle="collapse" data-target="#addDescriptionPanel" value='Add Description'/>
+			<div id="addDescriptionPanel" class="collapse">
+				<textarea rows='4' cols='50'/>
 			</div>
 		</div>
 		<div id="invoiceAmtDetails" class="row">
@@ -61,16 +67,21 @@
 				<label>Amount:</label><label class="actualAmt">12000</label>
 			</div>
 			<div class="clearfix"></div>
-			<div class="col-sm-6 labelInput">
+			<div class="col-sm-8 labelInput">
 				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='number' value="4000"/>
+				<select class="form-control paymentMode">
+					<option>Cash</option>
+					<option>Card</option>
+					<option>Cheque</option>
+				</select>
 			</div>
 			<div class="clearfix"></div>
 			<div class="col-sm-6 labelInput">
 				<label>Balance Amount:</label><label class="dueAmt">8000</label>
-			</div>			
+			</div>		
 		</div>
 		<div class="row submitBtnContainer">
-		<input type="button" value="Add Invoice"/>
+		<input type="button" class="addInvoiceToDB" value="Add Invoice"/>
 		</div>
 	</div>
 	<div class="col-sm-4 rightPane">

@@ -19,10 +19,27 @@ am.sel = (function(){
 		updatedItemPrice: '#editItemPopup .updatedItemPrice',
 		exportItemDetails: '#exportItemDetils'
 	}
+	var addInvoice= {
+		date: '#date',
+		invoiceNo: '#addInvoice-container .invoiceNumber',
+		dealerName: '#addInvoice-container .dealerName',
+		actualAmt1 : '#addInvoice-container .actualAmt1',
+		paidAmt: '#invoiceAmtDetails .paidAmt',
+		actalAmt2: '#invoiceAmtDetails .actualAmt',
+		dueAmt: '#invoiceAmtDetails .dueAmt',
+		itemListTable: '#addInvoice-container .itemListTable',
+		addDescriptionPanel: '#addDescriptionPanel',
+		paymentMode: '#addInvoice-container .paymentMode',
+		addInvoiceToDB: '#addInvoice-container .submitBtnContainer '
+	}
 	function getItemManagerSelectors(){
 		return itemManager;
 	}
+	function getAddInvoiceSelectors(){
+		return addInvoice;
+	}
 	return{
-		getItemManagerSelectors : getItemManagerSelectors
+		getItemManagerSelectors : getItemManagerSelectors,
+		getAddInvoiceSelectors: getAddInvoiceSelectors
 	}
 })();

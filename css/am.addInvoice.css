@@ -43,6 +43,12 @@
 #addInvoice-container .itemListTable input[disabled]{
 	background-color: white;
 }
+#addInvoice-container .itemListContainer input[type="text"]{
+	padding: 0px 5px;
+}
+#addDescriptionPanel{
+	padding-top: 15px;
+}
 #addInvoice-container .actualAmt,
 #addInvoice-container .paidAmt,
 #addInvoice-container .dueAmt{
@@ -55,4 +61,12 @@
 #dealerHistoryContainer{
 	padding-left: 10px;
 	margin-top: 20px;
+}
+#invoiceAmtDetails .form-control{
+	width: 100px;
+    display: inline-block;
+    margin-left: 10px;
+    height: 26px;
+    margin-top: 0px;
+    vertical-align: middle;
 }

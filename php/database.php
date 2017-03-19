@@ -1,5 +1,5 @@
 <?php
-	$myDb = "test";
+	$myDb = "automobile";
 	$servername = "localhost";
 	$username = "root";
 	$password = "root";
