@@ -70,3 +70,19 @@
     margin-top: 0px;
     vertical-align: middle;
 }
+#dealerHistoryContainer .lastRow{
+	border-top: 1px solid;
+}
+#dealerHistoryContainer tbody tr{
+	height: 25px;
+}
+.addDescBtn{
+	border: none;
+    padding: 2px 10px;
+    border-radius: 4px;
+}
+#addInvoice-container .addInvoiceToDB{
+	border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+}

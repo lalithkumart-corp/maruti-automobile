@@ -1,0 +1,40 @@
+<table class="">
+    <colgroup>
+        <col style="width: 30px">
+        <col style="width: 80px">
+        <col style="width: 70px">
+        <col style="width: 70px">
+        <col style="width: 70px">
+        <col style="width: 70px">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>S.N</th>
+            <th>Date</th>
+            <th>I.No</th>
+            <th>Tot-Amt</th>
+            <th>paid-Amt</th>
+            <th>Due-Amt</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% var serialNo = 1;
+        var total_due_amt = 0;
+            _.each(data, function(datum, index){ %>
+            <tr>
+                <td><%= serialNo %></td>
+                <td><%= datum.date %></td>
+                <td><%= datum.invoice_no %></td>
+                <td><%= datum.amount %></td>
+                <td><%= datum.paid_amt %></td>
+                <td><%= datum.due_amt %></td>
+            </tr>
+        <% serialNo++; 
+        total_due_amt += parseInt(datum.due_amt);
+        }) %>
+        <tr class="lastRow">
+            <td colspan="5"></td>
+            <td><%= total_due_amt%></td>
+        </tr>
+    </tbody>
+</table>

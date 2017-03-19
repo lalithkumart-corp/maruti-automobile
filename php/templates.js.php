@@ -11,3 +11,5 @@ var template_htmlstr_common_popup = <?php echo jsonStringify('../templates/htmls
 var template_htmlstr_msgBox = <?php echo jsonStringify('../templates/htmlstr_messageBox.html'); ?> ; 
 
 var template_htmlstr_exp_col_list = <?php echo jsonStringify('../templates/htmlstr_export_col_list.html'); ?> ; 
+
+var template_htmlstr_invoice_history_panel = <?php echo jsonStringify('../templates/htmlstr_invoice_page_history_panel.html'); ?> ; 

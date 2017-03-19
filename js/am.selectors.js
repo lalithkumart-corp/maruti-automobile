@@ -30,7 +30,8 @@ am.sel = (function(){
 		itemListTable: '#addInvoice-container .itemListTable',
 		addDescriptionPanel: '#addDescriptionPanel',
 		paymentMode: '#addInvoice-container .paymentMode',
-		addInvoiceToDB: '#addInvoice-container .submitBtnContainer '
+		addInvoiceToDB: '#addInvoice-container .submitBtnContainer',
+		dealerHistoryContainer: '#dealerHistoryContainer'
 	}
 	function getItemManagerSelectors(){
 		return itemManager;

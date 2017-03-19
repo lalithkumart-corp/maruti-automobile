@@ -19,6 +19,10 @@ am.addinvoice = {
 		$(sel.addInvoiceToDB).on('click', function(e){
 			self.submitInvoice();
 		});
+		$(sel.dealerName).on('blur', function(e){
+			var dealerName = $(this).val().trim();
+			self.checkHistory(dealerName);
+		});
 		self.table.bindEvents();	
 	},
 	table:{
@@ -85,7 +89,6 @@ am.addinvoice = {
 			_.each(columns, function(value, index){
 				if(index == 3){//to handle 'quality' checkbox
 					rowData[colNames[index]] = $(value).find('input').is(':checked') ? 'Original' : 'Other';
-					//continue;
 				}
 				else
 					rowData[colNames[index]] = $(value).find('input').val().trim();
@@ -134,7 +137,7 @@ am.addinvoice = {
 						desc: 'New Invoice has been created sccesfully ! ' ,
 						dismissBtnText: 'OK',
 						onHiddenCallback: function(){
-										//self.clearFields();
+										self.clearFields();
 									}
 					});          
 			}else{
@@ -142,6 +145,24 @@ am.addinvoice = {
 			}
 		});
 		am.core.call(request, callBackObj);
+	},
+	checkHistory: function(name){
+		var self = am.addinvoice;
+		var queryObj = {
+			aQuery: 'select * from automobile.invoive_list where delear_name="'+name+'"'
+		}
+		var callBackObj = am.core.getCallbackObject();
+		var request = am.core.getRequestData('../php/executequery.php', queryObj, 'POST');
+		callBackObj.bind('api_response', function(event, response){
+			response = JSON.parse(response);
+			self.updateHistoryTable(response);
+		});
+		am.core.call(request, callBackObj);
+	},
+	updateHistoryTable: function(historyData){
+		var self = am.addinvoice, sel = self.sel;
+		var historyElm = _.template(template_htmlstr_invoice_history_panel, {data: historyData});
+		$(sel.dealerHistoryContainer).html(historyElm);
 	},
 	getEntries: function(){
 		var self = am.addinvoice, sel = self.sel;
@@ -151,8 +172,8 @@ am.addinvoice = {
 		data.invoiceNo = $(sel.invoiceNo).val().trim();
 		data.dealerName = $(sel.dealerName).val().trim();
 		data.amount = $(sel.actualAmt1).val().trim();
-		data.paidAmt = $(sel.paidAmt).val();
-		data.dueAmt = $(sel.dueAmt).val();
+		data.paidAmt = $(sel.paidAmt).val() || 0;
+		data.dueAmt = $(sel.dueAmt).text();
 		data.paymentMode = $(sel.paymentMode).val();
 		data.desc = $(sel.addDescriptionPanel + ' textarea').val().trim();
 
@@ -207,5 +228,25 @@ am.addinvoice = {
 			self.current_s_no = parseInt(self.current_s_no) + 1;
 		});
 		am.core.call(request, callBackObj);
+	},
+	clearFields: function(){
+		var self = am.addinvoice, sel = self.sel;
+		$(sel.invoiceNo).val('');
+		$(sel.dealerName).val('');
+		$(sel.actualAmt1).val('');
+		$(sel.paidAmt).val('');
+		$(sel.dueAmt).text('');
+		$(sel.paymentMode);
+		$(sel.addDescriptionPanel + ' textarea').val('Cash');
+		var defaultRow = '<tr>';
+			defaultRow += '<td><input type="text" value="1" disabled=""></td>';
+			defaultRow += '<td><input type="text" class=""></td>';
+			defaultRow += '<td><input type="text" class=""></td>';
+			defaultRow += '<td><input type="checkbox" checked=""></td>';
+			defaultRow += '<td><input type="text"></td>';
+		defaultRow += '</tr>';
+		$(sel.itemListTable + ' tbody').html(defaultRow);
+		$(sel.invoiceNo).focus();
+		$(sel.dealerHistoryContainer).html('');
 	}
 }

@@ -6,12 +6,12 @@ $(document).on('ready',function(){
 });
 am.core = {
 	bindInitialEvents : function(){
-		//$('#addInvoice').on('click', function(e){
+		$('#addInvoice').on('click', function(e){
 			var property = {};
 			var template = _.template(template_htmlstr_addInvoice, property);
 			$('.mainContent').html(template);
 			am.addinvoice.init();
-		//});
+		});
 		$('#itemManager').on('click', function(e){
 			var property = {};
 			am.itemManager.init();

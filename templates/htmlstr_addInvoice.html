@@ -1,5 +1,5 @@
 <div id="addInvoice-container" class="row">
-	<div class="col-sm-8 leftPane">
+	<div class="col-sm-7 leftPane">
 		<div class="row">
 			<div class="col-sm-6 labelInput">
 				<label>Invoice No:</label><input class="inputBox invoiceNumber" type='text'/>
@@ -22,7 +22,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-6 labelInput">
-				<label>Amount:</label><input class="inputBox actualAmt1" type='number' value="12000"/>
+				<label>Amount:</label><input class="inputBox actualAmt1" type='number' value=""/>
 			</div>
 		</div>
 		<div class="row">
@@ -57,18 +57,18 @@
 			</div>
 		</div>
 		<div>
-			<input type='button' data-toggle="collapse" data-target="#addDescriptionPanel" value='Add Description'/>
+			<input type='button' class="addDescBtn" data-toggle="collapse" data-target="#addDescriptionPanel" value='Add Description'/>
 			<div id="addDescriptionPanel" class="collapse">
 				<textarea rows='4' cols='50'/>
 			</div>
 		</div>
 		<div id="invoiceAmtDetails" class="row">
 			<div class="col-sm-6 labelInput">
-				<label>Amount:</label><label class="actualAmt">12000</label>
+				<label>Amount:</label><label class="actualAmt"></label>
 			</div>
 			<div class="clearfix"></div>
-			<div class="col-sm-8 labelInput">
-				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='number' value="4000"/>
+			<div class="col-sm-10 labelInput">
+				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='number' value=""/>
 				<select class="form-control paymentMode">
 					<option>Cash</option>
 					<option>Card</option>
@@ -77,48 +77,22 @@
 			</div>
 			<div class="clearfix"></div>
 			<div class="col-sm-6 labelInput">
-				<label>Balance Amount:</label><label class="dueAmt">8000</label>
+				<label>Balance Amount:</label><label class="dueAmt"></label>
 			</div>		
 		</div>
 		<div class="row submitBtnContainer">
 		<input type="button" class="addInvoiceToDB" value="Add Invoice"/>
 		</div>
 	</div>
-	<div class="col-sm-4 rightPane">
-		<div class="row">
+	<div class="col-sm-5 rightPane">
+		<!--<div class="row">
 			<div class="item-image">
 				<img class="center-block" src="/images/default.jpg">
 			</div>
-		</div>
+		</div>-->
 		<div class="row">
 			<div id="dealerHistoryContainer">
-				<table class="">
-					<colgroup>
-						<col style="width: 30px">
-						<col style="width: 100px">
-						<col style="width: 100px">
-						<col style="width: 70px">
-						<col style="width: 10px">
-					</colgroup>
-					<thead>
-						<tr>
-							<th>S.N</th>
-							<th>Date</th>
-							<th>Invoice No</th>
-							<th>Amount</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</tbody>
-				</table>
+				
 			</div>
 		</div>
 	</div>
