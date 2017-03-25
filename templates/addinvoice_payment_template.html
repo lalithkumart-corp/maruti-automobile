@@ -1,0 +1,18 @@
+<div class="paymentRow <%= identifier%>">
+    <label></label>
+    <input class="inputBox paidAmt noBorder" type='number' value="0"/>
+    <select class="form-control paymentMode" data-identifier="<%= identifier%>">
+        <option>Cash</option>
+        <option>Card</option>
+        <option>Cheque</option>
+    </select>
+
+    <input type="text" id="date<%= identifier%>" class="inputBox"></input>
+    <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+    </span>
+
+    <div class="deletePaymentIcon" data-identifier="<%= identifier%>">
+        <img src="/images/minus.png"/>
+    </div>
+</div>

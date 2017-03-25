@@ -20,6 +20,7 @@ am.sel = (function(){
 		exportItemDetails: '#exportItemDetils'
 	}
 	var addInvoice= {
+		mainContainer: '#addInvoice-container',
 		date: '#date',
 		invoiceNo: '#addInvoice-container .invoiceNumber',
 		dealerName: '#addInvoice-container .dealerName',
@@ -29,9 +30,21 @@ am.sel = (function(){
 		dueAmt: '#invoiceAmtDetails .dueAmt',
 		itemListTable: '#addInvoice-container .itemListTable',
 		addDescriptionPanel: '#addDescriptionPanel',
+		textBox: '#addDescriptionPanel textarea',
 		paymentMode: '#addInvoice-container .paymentMode',
-		addInvoiceToDB: '#addInvoice-container .submitBtnContainer',
-		dealerHistoryContainer: '#dealerHistoryContainer'
+		paymentRow: '.paymentRow',
+		addInvoiceToDB: '#addInvoice-container .submitBtnContainer .addInvoiceToDB',
+		dealerHistoryContainer: '#dealerHistoryContainer',
+		rightPane: '#addInvoice-container .rightPane',
+		leftPane: '#addInvoice-container .leftPane',
+		addPaymentIcon: '#invoiceAmtDetails .addPaymentIcon',
+		deletePaymentIcon: '#invoiceAmtDetails .deletePaymentIcon',
+		paymentContainer: '#invoiceAmtDetails .paymentContainer'
+	}
+	var invoiceList = {
+		mainContainer: '#invoice_list_page',
+		table: '#invoice_list_page .invoice-list-table',
+		tableInvoiceCell: '#invoice_list_page .invoice-list-table .invoiceNo'
 	}
 	function getItemManagerSelectors(){
 		return itemManager;
@@ -39,8 +52,12 @@ am.sel = (function(){
 	function getAddInvoiceSelectors(){
 		return addInvoice;
 	}
+	function getInvoiceListSelectors(){
+		return invoiceList;
+	}
 	return{
 		getItemManagerSelectors : getItemManagerSelectors,
-		getAddInvoiceSelectors: getAddInvoiceSelectors
+		getAddInvoiceSelectors: getAddInvoiceSelectors,
+		getInvoiceListSelectors: getInvoiceListSelectors
 	}
 })();

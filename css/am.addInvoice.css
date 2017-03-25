@@ -86,3 +86,13 @@
     border-radius: 4px;
     padding: 4px 10px;
 }
+.addPaymentIcon, .deletePaymentIcon{
+	display: inline-block;
+}
+.addPaymentIcon{
+	display: none;
+}
+.addPaymentIcon img, .deletePaymentIcon img{
+	width: 15px;
+	cursor: pointer;
+}

@@ -10,28 +10,35 @@ am.addinvoice = {
 	bindEvents: function(){
 		var self = am.addinvoice, sel = self.sel;
 		$('#date').datepicker().datepicker("setDate", new Date());
-		$(sel.actualAmt1).on('keyup', function(e){
+		$(sel.actualAmt1).off().on('keyup', function(e){
 			self.doCalculation();
 		});
-		$(sel.paidAmt).on('keyup', function(e){
+		$(sel.paidAmt).off().on('keyup', function(e){
 			self.doCalculation();
 		});
-		$(sel.addInvoiceToDB).on('click', function(e){
+		$(sel.addInvoiceToDB).off().on('click', function(e){
 			self.submitInvoice();
 		});
-		$(sel.dealerName).on('blur', function(e){
+		$(sel.dealerName).off().on('blur', function(e){
 			var dealerName = $(this).val().trim();
 			self.checkHistory(dealerName);
 		});
+		$(sel.addPaymentIcon).off().on('click', function(){
+			self.appendPaymentRow();
+		});
+		$(sel.deletePaymentIcon).off().on('click', function(){
+			sefl.deletePaymentRow();
+		});
+
 		self.table.bindEvents();	
 	},
 	table:{
 		bindEvents: function(){
 			var self = am.addinvoice;
-			$(document).on('keyup', '.itemListTable input', function(e){
+			$('#addInvoice-container').off().on('keyup', '.itemListTable input', function(e){
 				var key = e.which || e.keyCode;
 			    if (key === 13) { // 13 is enter
-			     self.renderTable(this);
+			     	self.renderTable(this);
 			    }			
 			});
 		}
@@ -40,7 +47,12 @@ am.addinvoice = {
 		var self = am.addinvoice, sel = self.sel;
 		var amount = $(sel.actualAmt1).val();
 		$(sel.actalAmt2).text(amount);
-		var givenAmt = $(sel.paidAmt).val();
+		var givenAmt = 0;
+		_.each($(sel.paidAmt), function(elm, inde){
+			var price = $(elm).val();
+			if(price !== "")
+				givenAmt += parseInt(price);
+		});
 		var dueAmount = amount - givenAmt;
 		$(sel.dueAmt).text(dueAmount);
 	},
@@ -168,11 +180,11 @@ am.addinvoice = {
 		var self = am.addinvoice, sel = self.sel;
 		var data = {};
 		data.s_no = self.current_s_no;
+		data.unique_no = $.now();
 		data.date = $(sel.date).val();		
 		data.invoiceNo = $(sel.invoiceNo).val().trim();
 		data.dealerName = $(sel.dealerName).val().trim();
-		data.amount = $(sel.actualAmt1).val().trim();
-		data.paidAmt = $(sel.paidAmt).val() || 0;
+		data.amount = $(sel.actualAmt1).val().trim();		
 		data.dueAmt = $(sel.dueAmt).text();
 		data.paymentMode = $(sel.paymentMode).val();
 		data.desc = $(sel.addDescriptionPanel + ' textarea').val().trim();
@@ -201,6 +213,28 @@ am.addinvoice = {
 
 		data.itemList = tableData;
 
+		//get payment data
+		var paymentData = [];
+		var total_paid_amt = 0;
+		_.each($(sel.paymentRow), function(elm, index){
+			var arr = [], price= 0, paymentMode, date;
+			price = $(elm).find('.paidAmt').val();
+			paymentMode = $(elm).find('.paymentMode').val();
+			if($(elm).hasClass('initialPaymentRow'))
+				date = $(sel.date).val();
+			else
+				date = $(elm).find('.hasDatepicker').val();
+			arr.push(price);
+			arr.push(paymentMode);
+			arr.push(date);
+			paymentData.push(arr.join(':'));
+
+			//update total paid amt
+			if(price != "")
+				total_paid_amt += parseInt(price);
+		});
+		data.paymentData = paymentData.join(',');
+		data.paidAmt = total_paid_amt || 0;
 		return data;
 	},
 	fetchDefaults: function(){
@@ -248,5 +282,24 @@ am.addinvoice = {
 		$(sel.itemListTable + ' tbody').html(defaultRow);
 		$(sel.invoiceNo).focus();
 		$(sel.dealerHistoryContainer).html('');
+	},
+	appendPaymentRow: function(){
+		var self = am.addinvoice, sel = self.sel;
+		var identifier = $.now();
+		var elem = _.template(template_addinvoice_payment_adder, {identifier : identifier});
+		$(sel.paymentContainer).append(elem);
+		$('#date'+identifier).datepicker().datepicker("setDate", new Date());
+		$(sel.deletePaymentIcon).off().on('click', function(e){
+			var identifier = $(this).data('identifier');
+			self.deletePaymentRow(identifier);
+		});
+		$('.'+identifier+' input[type="number"]').on('keyup', function(e){
+			self.doCalculation();
+		});
+	},
+	deletePaymentRow: function(identifier){
+		var self = am.addinvoice, sel = self.sel;
+		$('.'+identifier).remove();
+		self.doCalculation();
 	}
 }

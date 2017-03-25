@@ -67,19 +67,25 @@
 				<label>Amount:</label><label class="actualAmt"></label>
 			</div>
 			<div class="clearfix"></div>
-			<div class="col-sm-10 labelInput">
-				<label>Paid Amount:</label><input class="inputBox paidAmt noBorder" type='number' value=""/>
-				<select class="form-control paymentMode">
-					<option>Cash</option>
-					<option>Card</option>
-					<option>Cheque</option>
-				</select>
+			<div class="col-sm-12 labelInput paymentContainer">
+				<div class="paymentRow initialPaymentRow">
+					<label>Paid Amount:</label>
+					<input class="inputBox paidAmt noBorder" type='number' value="0"/>
+					<select class="form-control paymentMode" data-identifier="initialPaymentRow">
+						<option>Cash</option>
+						<option>Card</option>
+						<option>Cheque</option>
+					</select>
+					<div class="addPaymentIcon">
+						<img src="/images/plus2.png"/>
+					</div>
+				</div>
 			</div>
 			<div class="clearfix"></div>
 			<div class="col-sm-6 labelInput">
 				<label>Balance Amount:</label><label class="dueAmt"></label>
 			</div>		
-		</div>
+		</div>	
 		<div class="row submitBtnContainer">
 		<input type="button" class="addInvoiceToDB" value="Add Invoice"/>
 		</div>

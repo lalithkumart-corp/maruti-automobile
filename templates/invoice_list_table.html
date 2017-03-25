@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class='col-sm-10'>
+        <table class="invoice-list-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Invoice</th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Due</th>
+                    <th>Other</th>
+                </tr>
+                <tr id="filterData">
+                    <th></th>
+                    <th>Invoice</th>
+                    <th></th>
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each(tableData, function(aRow, index){ %>
+                    <tr>
+                        <td><%= index+1 %></td>
+                        <td class="invoiceNo" data-unique-no = <%= aRow.unique_no%> ><%= aRow.invoice_no %></td>
+                        <td><%= aRow.date %></td>
+                        <td><%= aRow.delear_name %></td>
+                        <td><%= aRow.amount %></td>
+                        <td><%= aRow.paid_amt%></td>
+                        <td><%= aRow.due_amt%></td>
+                        <td></td>
+                    </tr>
+                <% })%>            
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-1"></div>
+</div>

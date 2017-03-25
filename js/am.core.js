@@ -16,6 +16,12 @@ am.core = {
 			var property = {};
 			am.itemManager.init();
 		});
+		$('#viewAllInvoice').on('click', function(e){
+			var property = {};
+			var template = _.template(template_invoice_list_page, property);
+			$('.mainContent').html(template);
+			am.invoiceList.init();
+		});
 	},
 	getCallbackObject : function() {
 		callback = $({});
