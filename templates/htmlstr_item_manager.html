@@ -5,7 +5,7 @@
 		<input type="text" placeholder="Item Name" class="newItemName" data-index="3" />
 		<input type="text" placeholder="Price" class="newItemPrice" data-index="4" />
 		<!-- <label class="switch"><input type="checkbox" class="newItemQuality" checked/><div class="slider round"></div></label> -->
-		<select class="ui itemQualityDropdown dropdown" data-index="5">
+		<select class="ui itemQualityDropdown dropdown originalItem" data-index="5">
 			  <option value="0">Original</option>
 			  <option value="1">Other</option>
 		</select>
@@ -16,59 +16,6 @@
 			<label>
 				<img class="delete-selected-item disabled" src="/images/delete-icon.png" title="Delete Selected item">
 			</label>
-	</div>
-	<div class='row'>
-		<div class="col-sm-1"></div>
-		<div class="col-sm-10 itemListContainer">
-			<table id="item_manager_table">
-				<!-- <colgroup>
-					<col style="width: 50px">
-					<col style="width: 120px">
-					<col style="width: 260px">
-					<col style="width: 30px">
-					<col style="width: 40px">
-				</colgroup> -->
-				<thead>
-					<tr>
-						<th>S.No</th>
-						<th>ItemNumber</th>
-						<th>Company</th>
-						<th>Items Name</th>
-						<th>Q*</th>
-						<th>Price</th>
-					</tr>
-					<tr id="filterData">
-						<th></th>
-						<th>Enter Item No...</th>
-						<th>Enter Company Name...</th>
-						<th>Enter Item Name...</th>
-						<th></th>
-						<th>Enter Price Value...</th>
-					</tr>
-				</thead>
-				<tbody>
-	    	    	<%
-	    	    	var row = 0, my_unique_id=[]; 
-	    	    	_.each(itemData, function(value, index){
-	    	    		if(value.my_unique_id !== '' && value.my_unique_id !== null){
-	    		    		if(my_unique_id.indexOf(value.my_unique_id) == -1){
-	    			    		my_unique_id.push(value.my_unique_id);
-	    			    		row+= 1; %>
-	    			    		<tr id="<%= value.my_unique_id %>">
-	    			    			<td><%= row %></td>
-	    			    			<td><%= value.item_no %></td>
-	    			    			<td><%= value.item_brand %></td>
-	    			    			<td><%= value.item_name %></td>
-	    			    			<td><div class="<%= value.item_quality %>"><span class="hidden<%= value.item_quality %>"><%= value.item_quality %></span></div></td>
-	    			    			<td><%= am.itemManager.getCurrencyFormat(value.item_price) %></td>
-	    			    		</tr>
-	    			    	<% }
-	    	    		} 
-	    	    	});
-	    	    	%>
-				</tbody>
-			</table>
-		</div>
-		<div class="col-sm-1"></div>
+		<input type="button" value="" title="Export" id="exportItemDetils"/>
 	</div>
 </div>

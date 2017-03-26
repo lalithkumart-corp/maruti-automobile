@@ -3,8 +3,9 @@ if(typeof am == 'undefined'){
 }
 am.itemManager = {
 	selectors:am.sel.getItemManagerSelectors(),
-	init: function(){
-		am.itemManager.getItemList();		
+	init: function(){		       
+		am.itemManager.getItemList();
+		am.itemManager.export.init();		
 	},
 	bindEvents: function(){
 		var $itemManager = am.itemManager, sel = $itemManager.selectors;
@@ -17,13 +18,22 @@ am.itemManager = {
 		});
 		$(sel.editItem).off().on('click', function(e){
 			if($(this).hasClass('disabled'))
-				return;
+				return;			
 			$itemManager.editDialogBox.open();
 		});
 		$(sel.deleteItem).off().on('click', function(e){
 			if($(this).hasClass('disabled'))
 				return;
 			$itemManager.deleteItem.showConfirmation();
+		});
+		$(sel.newItemQuality).on('change', function(e){
+			var val = $(this).val(), classNm = 'otherItem';
+			if(val == 0)
+				classNm = 'originalItem';
+			
+			$(this).removeClass('originalItem');
+			$(this).removeClass('otherItem');
+			$(this).addClass(classNm);
 		});
 		$itemManager.bindTraverseEvents();
 	},
@@ -55,9 +65,12 @@ am.itemManager = {
 		am.core.call(request, callBackObj);
 	},
 	renderTableData: function(){
-		var $itemManager = am.itemManager;
-		var template = _.template(template_htmlstr_item_manager, {itemData: $itemManager.rawItemData});
-		$('.mainContent').html(template);
+		var $itemManager = am.itemManager, sel = $itemManager.selectors;
+		if($(sel.tableSection).length){
+			$(sel.tableSection).remove();
+		}
+		var template = _.template(template_htmlstr_item_manager_table, {itemData: $itemManager.rawItemData});
+		$(sel.item_manager_main_container).append(template);
 		$itemManager.asDataTable();
 	},
 	asDataTable: function(){
@@ -93,19 +106,21 @@ am.itemManager = {
         $itemManager.table = table;
 
         $('#item_manager_table tbody tr').on( 'click', function () {
-        	if($(this).hasClass('anItemSelected')){
-        		$(this).removeClass('anItemSelected');
-        		$('.edit-selected-item, .delete-selected-item').addClass('disabled');
+			if($(this).hasClass('anItemSelected')){
+        		$(this).removeClass('anItemSelected');				
         	}else{
-	            $('#item_manager_table tbody .anItemSelected').removeClass('anItemSelected');
 	            $(this).addClass('anItemSelected');
-	            $('.edit-selected-item, .delete-selected-item').removeClass('disabled');
-	            $('#btn0OK').prop('disabled', false);
 	        }
-        });
+			if($('.anItemSelected').length == 0)
+				$('.edit-selected-item, .delete-selected-item').addClass('disabled');				
+			else{
+				$('.edit-selected-item, .delete-selected-item').removeClass('disabled');
+				if($(sel.anItemSelected).length > 1)
+					$('.edit-selected-item').addClass('disabled');
+			}
+			
 
-		$(sel.inputContainer).append('<input type="button" value="" title="Export" id="exportItemDetils"/>');
-        $itemManager.export.init();
+        });		
 	},
 	tableComplete: function(){
 		var $itemManager = am.itemManager;
@@ -127,7 +142,7 @@ am.itemManager = {
 		params.itemQuality = $(sel.newItemQuality).val();
 		params.price = $(sel.newItemPrice).val().trim();
 
-		if(params.itemQuality == '1')
+		if(params.itemQuality == '0')
 			params.itemQuality = 'original';
 		else
 			params.itemQuality = 'other';
@@ -168,7 +183,8 @@ am.itemManager = {
 		   				dismissBtnText: 'Ok',
 		   				onHiddenCallback: $itemManager.setFocus
 		            });
-		            $itemManager.getItemList();		
+		            $itemManager.getItemList();
+					$itemManager.clearEntries();	
 	            }else{
 	            	am.popup.init({
 		               	title: 'Error',
@@ -267,15 +283,16 @@ am.itemManager = {
     	},
     	update: function(){
     		var $itemManager = am.itemManager, sel = $itemManager.selectors;
+			var quality;
 	    	var myUniqueId = $(sel.updatedItemNo).attr('id');
 	    	var itemNo = $(sel.updatedItemNo).val().trim();
 	    	var companyName = $(sel.updatedCompanyName).val().trim();
 	    	var itemName = $(sel.updatedItemName).val().trim();
-	    	var isChecked = $(sel.updatedItemQuality).is(':checked');
-	    		if(isChecked)
-	    			var quality = 'original';
+	    	var itemQlty = $(sel.updatedItemQuality).val();
+	    		if(itemQlty == "0")
+	    			quality = 'original';
 	    		else
-	    			var quality = 'other';
+	    			quality = 'other';
 	    	var price = $(sel.updatedItemPrice).val().trim();
 
 	    	var obj = {};
@@ -297,22 +314,43 @@ am.itemManager = {
     },
     deleteItem: {
     	showConfirmation: function(){
+			var msg ;
+			if($('.anItemSelected').length >1)
+				msg = 'Are you sure to delete Multiple items ?';
+			else
+				msg = 'Are you sure to delete <b>'+ $('.anItemSelected td:eq(2)').text() + ' '+ $('.anItemSelected td:eq(3)').text() +'</b> item details ?'
     		 am.popup.init(
                 {
                  title: 'Confirmation',
-                 desc: 'Are you sure to delete <b>'+ $('.anItemSelected td:eq(2)').text() + ' '+ $('.anItemSelected td:eq(3)').text() +'</b> item details ?' ,
+                 desc: msg,
                  dismissBtnText: 'No',
-                 buttons: ['Yes'],
+                 buttons: ['Delete'],
                  callbacks: [am.itemManager.deleteItem.confirmDelete]
                 });
     	},
     	confirmDelete: function(){
-    		var $itemManager = am.itemManager
-    		var my_unique_id = $('.anItemSelected').attr('id');
-    		var companyName = $('.anItemSelected td:eq(2)').text();
-    		var itemName = $('.anItemSelected td:eq(3)').text();
-    		var obj = {};
-        	obj.aQuery= 'DELETE FROM '+am.database.schema+'.item_lists WHERE my_unique_id = "'+ my_unique_id +'"';
+    		var $itemManager = am.itemManager, sel = $itemManager.selectors;
+			var msgPrefix;
+			var selectedItems = $(sel.anItemSelected).length;
+			if(selectedItems > 1){
+				var obj = {};
+				obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
+				_.each($('.anItemSelected'), function(elm, index){
+					var uniqueId = $(elm).attr('id');
+					obj.aQuery += "DELETE FROM "+am.database.schema+".item_lists WHERE my_unique_id = '"+uniqueId+"';";
+				})
+				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1;';
+				obj.multiQuery = 'true';
+				msgPrefix = 'All selected items';
+			}else{
+				var my_unique_id = $('.anItemSelected').attr('id');
+				var companyName = $('.anItemSelected td:eq(2)').text();
+				var itemName = $('.anItemSelected td:eq(3)').text();
+				msgPrefix = 'The item <b>'+ companyName +' '+ itemName +'</b>';
+				var obj = {};
+				obj.aQuery= 'DELETE FROM '+am.database.schema+'.item_lists WHERE my_unique_id = "'+ my_unique_id +'"';
+			}
+			    		
         	var callBackObj = am.core.getCallbackObject();
 			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
 			callBackObj.bind('api_response', function(event, response){
@@ -320,14 +358,16 @@ am.itemManager = {
 	        	if(response[0].status == true){
 	                am.popup.init({
 		               	title: 'Success',
-		   				desc: 'The item <b>'+ companyName +' '+ itemName +'</b> has been removed Successfully !',
+		   				desc: msgPrefix+' has been removed Successfully !',
 		   				dismissBtnText: 'Ok'
 		            });
-		            $itemManager.getItemList();		
+					setTimeout(function(e){
+						$itemManager.getItemList();
+					},1000);		            
 	            }else{
 	            	am.popup.init({
 		               	title: 'Error',
-		   				desc: 'The item <b>'+ companyName +' '+ itemName +'</b> could not be removed !',
+		   				desc: msgPrefix+' could not be removed !',
 		   				dismissBtnText: 'Ok'
 		            });
 	            }
@@ -348,5 +388,12 @@ am.itemManager = {
 				am.export.init(options);
 			});
 		}
+	},
+	clearEntries: function(){
+		var $itemManager = am.itemManager, sel = $itemManager.selectors;
+		$(sel.newItemNo).val('');
+		$(sel.newCompanyName).val('');
+		$(sel.newItemName).val('');
+		$(sel.newItemPrice).val('');
 	}
 }

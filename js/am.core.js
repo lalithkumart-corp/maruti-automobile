@@ -14,6 +14,8 @@ am.core = {
 		});
 		$('#itemManager').on('click', function(e){
 			var property = {};
+			var template = _.template(template_htmlstr_item_manager, {});
+			$('.mainContent').html(template);
 			am.itemManager.init();
 		});
 		$('#viewAllInvoice').on('click', function(e){

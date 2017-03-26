@@ -3,6 +3,7 @@ if(typeof am == 'undefined'){
 }
 am.sel = (function(){
 	var itemManager= {
+		item_manager_main_container: '#item_manager_main_container',
 		inputContainer: '#item_manager_main_container .inputContainer',
 		addItem: '#item_manager_main_container .addItem',
 		newItemNo: '#item_manager_main_container .newItemNo',
@@ -15,9 +16,11 @@ am.sel = (function(){
 		updatedItemNo: '#editItemPopup .updatedItemNo',
 		updatedCompanyName: '#editItemPopup .updatedCompanyName',
 		updatedItemName: '#editItemPopup .updatedItemName',
-		updatedItemQuality: '#editItemPopup .updatedItemQuality',
+		updatedItemQuality: '#editItemPopup .itemQualityDropdown',
 		updatedItemPrice: '#editItemPopup .updatedItemPrice',
-		exportItemDetails: '#exportItemDetils'
+		exportItemDetails: '#exportItemDetils',
+		tableSection: '#item_manager_main_container .tableSection',
+		anItemSelected: '.anItemSelected'
 	}
 	var addInvoice= {
 		mainContainer: '#addInvoice-container',

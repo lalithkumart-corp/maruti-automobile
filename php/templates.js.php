@@ -4,6 +4,8 @@ var template_htmlstr_addInvoice = <?php echo jsonStringify('../templates/htmlstr
 
 var template_htmlstr_item_manager = <?php echo jsonStringify('../templates/htmlstr_item_manager.html'); ?> ;
 
+var template_htmlstr_item_manager_table = <?php echo jsonStringify('../templates/htmlstr_item_manager_table.html'); ?> ;
+
 var template_htmlstr_item_manager_edit = <?php echo jsonStringify('../templates/htmlstr_item_manager_edit.html'); ?> ;
 
 var template_htmlstr_common_popup = <?php echo jsonStringify('../templates/htmlstr_common_popup.html'); ?> ; 

@@ -41,16 +41,19 @@ am.autocompleter = {
 			var $im = am.autocompleter.itemManager;
 			switch(listName){
 				case $im.dbColName.itemNo: 
+					$im.itemNosList = [];
 					_.each(data , function(value, key){
 						$im.itemNosList.push(value[$im.dbColName.itemNo]);
 					});
 					break;
 				case $im.dbColName.compName:
+					$im.companyNameList = [];
 					_.each(data , function(value, key){
 						$im.companyNameList.push(value[$im.dbColName.compName]);
 					});
 					break;
 				case $im.dbColName.itemName:
+					$im.itemNameList = [];
 					_.each(data , function(value, key){
 						$im.itemNameList.push(value[$im.dbColName.itemName]);
 					});

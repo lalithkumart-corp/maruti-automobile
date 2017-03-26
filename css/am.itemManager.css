@@ -9,17 +9,20 @@
 	text-align: center;
 	margin-bottom: 10px;
 }
+#item_manager_main_container tr{
+	cursor: default;
+}
 #item_manager_main_container tr.anItemSelected{
 	background-color: lightgrey;
 }
 #item_manager_main_container .original{
-	border: 5px solid #f19f4e;
+	border: 5px solid #219cec;
     display: inline-block;
     border-radius: 50%;
     margin-bottom: 1px;
 }
 #item_manager_main_container .other{
-	border: 5px solid #219cec;
+	border: 5px solid #f19f4e;
     display: inline-block;
     border-radius: 50%;
     margin-bottom: 1px;
@@ -120,4 +123,20 @@
     border: none;
     border-radius: 4px;
     padding: 5px 10px;
+}
+.itemQualityDropdown.originalItem{
+	background-color: #219cec;
+	background-color: rgba(33, 156, 236, 0.63);
+    border-radius: 2px;
+}
+.itemQualityDropdown.otherItem{
+	background-color: #f19f4e;
+	background-color: rgba(241, 159, 78, 0.72);
+    border-radius: 2px;
+}
+option{
+	background-color: white;
+}
+option:hover, option:focus{
+	background-color: white;
 }
