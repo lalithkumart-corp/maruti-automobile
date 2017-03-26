@@ -221,12 +221,12 @@ am.itemManager = {
 			else
 				condition5 = false;
 
-			if(anItem.item_price.toLowerCase() == params.price.toLowerCase())
-				condition6 = true;
-			else
-				condition6 = false;
+			// if(anItem.item_price.toLowerCase() == params.price.toLowerCase())
+			// 	condition6 = true;
+			// else
+			// 	condition6 = false;
 
-			if(condition1 && condition3 && condition4 && condition5 && condition6){
+			if(condition1 && condition3 && condition4 && condition5 ){
 				alreadyExists = true;
 				return alreadyExists;
 			}
