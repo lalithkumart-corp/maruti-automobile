@@ -5,11 +5,12 @@ am.addinvoice = {
 	sel: am.sel.getAddInvoiceSelectors(),
 	init: function(){
 		am.addinvoice.fetchDefaults();
+		$('#date').datepicker().datepicker("setDate", new Date());
 		am.addinvoice.bindEvents();
 	},
 	bindEvents: function(){
 		var self = am.addinvoice, sel = self.sel;
-		$('#date').datepicker().datepicker("setDate", new Date());
+		
 		$(sel.actualAmt1).off().on('keyup', function(e){
 			self.doCalculation();
 		});
