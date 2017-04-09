@@ -3,11 +3,13 @@ if(typeof am == 'undefined'){
 }
 am.invoiceList = {
     sel: am.sel.getInvoiceListSelectors(),
+    viewMode: null,
     rerender: false,
     dataModel:{
         rawLists: null
     },
     init: function(){
+        am.invoiceList.viewMode = 'allInvoice';
         am.invoiceList.fetchTableData();
         am.invoiceList.bindEvents();
     },
@@ -17,6 +19,15 @@ am.invoiceList = {
             if($(this).hasClass('disabled'))
 				return;
 			am.deleteInvoice.showConfirmation();
+        });
+        $('body').on('click', function (event) {
+            self.dismissAllPopUps(event);
+        });
+
+        $(document).keyup(function (event) {
+            if (event.which === 27) {
+                self.dismissAllPopUps(event);
+            }
         });
     },
     fetchTableData: function(){
@@ -42,15 +53,17 @@ am.invoiceList = {
         var template = _.template(template_invoice_list_table, property);
         $(sel.tableContainer).html(template);
         self.renderAsDataTable();
+        $(sel.deleteBtn).addClass('disabled');
     },
     renderAsDataTable: function(){
         var self = am.invoiceList, sel = self.sel;
-        $(sel.table+ ' thead tr#filterData th').not(":eq(0), :eq(2), :eq(4), :eq(5), :eq(6), :eq(7)").each( function () {
+        $(sel.table+ ' thead tr#filterData th').not(":eq(0), :eq(1), :eq(3), :eq(5), :eq(6), :eq(7), :eq(8)").each( function () {
         	var title = $(sel.table+ ' thead tr#filterData th').eq( $(this).index() ).text();
         	var className = title.replace(/\./g, '');
         	className = className.replace(/\s/g, '');
         	$(this).html( '<input type="text" class="'+className+' filterInput" onclick="event.stopPropagation();" placeholder="'+title+'" />' );
     	});
+
     	$(sel.table+ " thead input[type='text']").on( 'keyup change', function () {
 	        table
 	            .column( $(this).parent().index()+':visible' )
@@ -60,11 +73,12 @@ am.invoiceList = {
 
         var table = $(sel.table).on( 'init.dt', function () {
                self.tableComplete();
-            }).DataTable({
+            }).DataTable({  
                 paging: false,
                 scrollY: 400,
                 scrollCollapse: true,
                      aoColumns : [
+                        { "sWidth": "3%"},
                         { "sWidth": "3%"},
                         { "sWidth": "10%"},
                         { "sWidth": "10%"},
@@ -76,11 +90,33 @@ am.invoiceList = {
                     ]
         	});
         self.table = table;
+
+        $.fn.dataTableExt.afnFiltering.push(
+            function(oSettings, aData, iDataIndex){
+                var validRow = false;
+                if(self.viewMode != 'allInvoice'){
+                    if(self.viewMode == 'closedInvoice'){
+                        if(aData[1] == 'closed')
+                            validRow = true;
+                    }else if(self.viewMode == 'pendingInvoice'){
+                        if(aData[1] == 'open')
+                            validRow = true;
+                    }
+                }else
+                    validRow = true;
+                
+                return validRow;
+                
+            }
+        );
     },
     tableComplete: function(){
 		var self = am.invoiceList, sel = self.sel;
 		if(typeof self.table != 'undefined' && !_.isEmpty(self.table)){
             self.table.draw();
+            var optionsPopover = '<div class="invoiceListOptions" data-toggle="optionsPopover" data-placement="right" data-html="'+self.getOptionsPopover() +'" data-content="'+ self.getOptionsPopover() +'" data-title="Options" data-class="viewModePopover" data-container="body"></div>'
+            $('.dataTables_scrollHead .invoice-list-table thead tr#filterData th:eq(1)').html(optionsPopover);
+            
             self.bindTableEvents();
         }else{
             setTimeout(function(){
@@ -89,7 +125,13 @@ am.invoiceList = {
         }
 	},
     bindTableEvents: function(){
-        var self = am.invoiceList, sel = self.sel;        
+        var self = am.invoiceList, sel = self.sel;  
+        $(".dataTables_scrollHead [data-toggle = 'optionsPopover']").popover({trigger: "click"});
+        $("[data-toggle = 'invoice-desc-popover']").popover({trigger: "click"});
+
+        $('.invoiceListOptions').on('click', function(e){
+            e.stopPropagation();
+        });
         $(sel.tableInvoiceCell).off().on('click', function(e){
             e.stopPropagation();
             var uniqueNo = $(this).data('unique-no');
@@ -117,6 +159,28 @@ am.invoiceList = {
 			else
 				$(sel.deleteBtn).removeClass('disabled');			
         });
+
+        $('[data-toggle="optionsPopover"]').on('show.bs.popover', function(e) {
+            setTimeout(function(){
+                $("input[value='"+self.viewMode+"']").attr('checked', true);
+                $(".viewModePopover  input").off().on('change' , function(e){
+                    self.viewMode = $(this).attr('value');
+                    self.table.draw();
+                });
+            },200);
+        });
+        $(sel.invoiceDescPopover).on('click', function(e){
+            e.stopPropagation();
+        });
+    },
+    getOptionsPopover: function(){
+        var optionsPopover = "<div class='popoverContainer'><label><input type = 'radio' value='pendingInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Pending Invoice's</label></br><label><input type = 'radio' value='closedInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Closed Invoice's</label></br><label><input type = 'radio' value='allInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>All Invoice's</label></div>";
+        return optionsPopover;
+    },
+    //get description of a particular invoice for displaying in a popover container
+    getInvoiceDesc: function(data){
+        var descriptionPopover = "<div class='popoverContainer'>"+data.description+"</div>";
+        return descriptionPopover;
     },
     getInvoiceData: function(uniqueNo){
         var self = am.invoiceList, sel = self.sel, myInvoiceData = null;
@@ -132,6 +196,7 @@ am.invoiceList = {
         return myInvoiceData;
     },
     onEditInvoicePopupShown: function(myInvoiceData){
+        $('.editInvoicePopup .commonModalBodyDiv').prepend('<div class="update-invoice-msg-container"><p class="msg-string"></p></div>');
         var self = am.invoiceList;
         am.editInvoice.init(myInvoiceData);        
     },
@@ -141,6 +206,17 @@ am.invoiceList = {
             am.invoiceList.fetchTableData();
             self.rerender = false;
         }
+    },
+    dismissAllPopUps: function(e){
+        var popoverControls = $('[data-toggle="optionsPopover"],\
+             [data-toggle="invoice-desc-popover"]');
+        popoverControls.each(function () {
+            //the 'is' for buttons that trigger popups
+            //the 'has' for icons within a button that triggers a popup
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                $(this).popover('hide');
+            }
+        });		     
     }
 }
 
@@ -244,7 +320,10 @@ am.editInvoice = {
         $(".disablingLayer").hide();
     },
     updateInvoice: function(data){
+        var sel = am.invoiceList.sel;
         var updated = false;
+        var msg = 'Error in Update the invoice.';
+        var msgClassName = 'error';
         var queryObj = {
             aQuery: "UPDATE "+am.database.schema+".invoive_list SET invoice_no='"+data.invoiceNo+"', date='"+data.date+"', delear_name='"+data.dealerName+"', amount='"+data.amount+"', paid_amt='"+data.paidAmt+"', due_amt='"+data.dueAmt+"', payment_mode='"+data.paymentMode+"', items='"+data.itemList+"', description='"+data.desc+"', payment_data='"+data.paymentData+"' WHERE unique_no='"+data.unique_no+"'"
         }
@@ -252,8 +331,13 @@ am.editInvoice = {
 		var request = am.core.getRequestData('../php/executequery.php', queryObj, 'POST');
 		callBackObj.bind('api_response', function(event, response){
             var data = JSON.parse(response);
-            if(data[0].status == true)
+            if(data[0].status == true){
                 updated = true;
+                msg = 'Invoice updated successfully!';
+                msgClassName = 'success';
+            }
+            $(sel.msgContainer +' .msg-string').addClass(msgClassName);
+            $(sel.msgContainer +' .msg-string').html(msg).fadeIn(500).delay(2000).fadeOut(1000);
             am.invoiceList.rerender = true;            
         });
         am.core.call(request, callBackObj);

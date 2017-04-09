@@ -5,6 +5,7 @@
             <thead>
                 <tr>
                     <th>S.No</th>
+                    <th></th>
                     <th>Invoice</th>
                     <th>Date</th>
                     <th>Name</th>
@@ -14,6 +15,7 @@
                     <th>Other</th>
                 </tr>
                 <tr id="filterData">
+                    <th></th>
                     <th></th>
                     <th>Invoice</th>
                     <th></th>
@@ -28,13 +30,31 @@
                 <% _.each(tableData, function(aRow, index){ %>
                     <tr>
                         <td><%= index+1 %></td>
+                        <td>
+                            <% if(parseInt(aRow.due_amt) > 0){ %>
+                                <div class="open"><span class="hiddenopen">open</span></div>
+                            <% }else{ %>
+                                <div class="closed"><span class="hiddenclosed">closed</span></div>
+                            <% } %>
+                        </td>
                         <td class="invoiceNo" data-unique-no = <%= aRow.unique_no%> ><%= aRow.invoice_no %></td>
                         <td><%= aRow.date %></td>
                         <td><%= aRow.delear_name %></td>
                         <td><%= aRow.amount %></td>
                         <td><%= aRow.paid_amt%></td>
                         <td><%= aRow.due_amt%></td>
-                        <td></td>
+                        <td>
+                            <div class="invoiceDescPopover"
+                                data-toggle = 'invoice-desc-popover'
+                                data-placement = 'right'
+                                data-content = "<%= am.invoiceList.getInvoiceDesc(aRow)  %>"
+                                data-html = "<%= am.invoiceList.getInvoiceDesc(aRow) %>"
+                                data-title = "<p style='float :left;'><%= aRow.invoice_no%></p><p style='float :right;'><%= aRow.date%></p>"
+                                data-container = 'body'
+                                data-class = "invoice-desc-popover"
+                            > 
+                            </div>
+                        </td>
                     </tr>
                 <% })%>            
             </tbody>

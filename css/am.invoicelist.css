@@ -15,11 +15,18 @@
     width: 650px;
     top: 0px;
     left: calc(50% - 325px);
-    max-height: 600px;
+    max-height: 650px;
     overflow-x: hidden;
+    border: 10px solid lightgray;
+    border-radius: 5px;
 }
 .editInvoicePopup .commonModalBodyDiv{
-    height: auto !important;
+    height: 550px !important;
+    max-height: 550px;
+    overflow-x: hidden;
+}
+.editInvoicePopup .leftPane{
+    border: none;
 }
 .editInvoicePopup .commonModalFooterDiv{
     margin: 15px;
@@ -30,7 +37,7 @@
 .disablingLayer{
     position: fixed;
     width: 650px;
-    height: 490px;
+    height: 550px;
 }
 #invoice_list_page .delete-selected-invoice{
     height: 20px;
@@ -43,4 +50,86 @@
 }
 .invoice_list_table_container tr.anItemSelected{
     background-color: lightgrey;
+}
+.invoiceListOptions{
+    background-image: url(/images/img-settings3.png);
+    width: 30px;
+    height: 28px;
+    background-size: 25px;
+    background-repeat: no-repeat
+}
+.dataTables_scrollBody .viewModePopover{
+    display: none !important;
+}
+.invoice-list-table .open{
+    border: 5px solid green;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+.invoice-list-table .closed{
+    border: 5px solid red;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+.hiddenopen, .hiddenclosed{
+    display: none;
+}
+.viewModePopover.popover{
+    width: 230px;
+    height: 180px;
+    min-width: 230px;
+    margin-left: 7px !important;
+}
+.viewModePopover .popover-title,
+.invoice-desc-popover .popover-title{
+    border: 15px solid rgba(235, 235, 235, 0.9);
+    border-bottom: none;
+    height: 48px;
+    background-color: #629ED8;
+    color: white;
+}
+.viewModePopover .popover-content,
+.invoice-desc-popover .popover-content{
+    border: 15px solid rgba(235, 235, 235, 0.9);
+    height: calc(100% - 43px);
+    border-top: none;
+    overflow-x: hidden;
+}
+.invoice-list-table  thead th{
+    outline: none;
+}
+
+.invoice-desc-popover{
+    width: 220px;
+    height: 150px;
+}
+.invoice-desc-popover .popover-title{
+    border: none;
+    height: 34px;
+}
+.invoice-desc-popover .popover-content{
+    border: none;
+    height: calc(100% - 33px); 
+}
+.invoiceDescPopover{
+    cursor: pointer;
+    background-image: url(/images/triple-dot.png);
+    width: 20px;
+    height: 20px;
+    background-size: 19px;
+    background-repeat: no-repeat;
+    margin-left: 16px;
+}
+.update-invoice-msg-container{
+    text-align: center;
+}
+.msg-string.success{
+    color: green;
+    font-weight: bold;
+}
+.msg-string.error{
+    color: red;
+    font-weight: bold;
 }

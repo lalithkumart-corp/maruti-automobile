@@ -51,7 +51,9 @@ am.sel = (function(){
 		tableContainer: '#invoice_list_page .invoice_list_table_container',
 		table: '#invoice_list_page .invoice-list-table',
 		tableInvoiceCell: '#invoice_list_page .invoice-list-table .invoiceNo',
-		tableRow: '#invoice_list_page .invoice-list-table tbody tr'
+		tableRow: '#invoice_list_page .invoice-list-table tbody tr',
+		invoiceDescPopover: '.invoiceDescPopover',
+		msgContainer: '.update-invoice-msg-container'
 	}
 	function getItemManagerSelectors(){
 		return itemManager;
