@@ -32,3 +32,15 @@
     width: 650px;
     height: 490px;
 }
+#invoice_list_page .delete-selected-invoice{
+    height: 20px;
+    padding-left: 10px;
+    vertical-align: top;
+    cursor: pointer;
+}
+#invoice_list_page .delete-selected-invoice.disabled{
+    opacity: 0.2;
+}
+.invoice_list_table_container tr.anItemSelected{
+    background-color: lightgrey;
+}

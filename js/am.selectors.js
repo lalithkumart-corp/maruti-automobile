@@ -46,8 +46,12 @@ am.sel = (function(){
 	}
 	var invoiceList = {
 		mainContainer: '#invoice_list_page',
+		utilContainer: '#invoice_list_page .util-container',
+		deleteBtn: '#invoice_list_page .delete-selected-invoice',
+		tableContainer: '#invoice_list_page .invoice_list_table_container',
 		table: '#invoice_list_page .invoice-list-table',
-		tableInvoiceCell: '#invoice_list_page .invoice-list-table .invoiceNo'
+		tableInvoiceCell: '#invoice_list_page .invoice-list-table .invoiceNo',
+		tableRow: '#invoice_list_page .invoice-list-table tbody tr'
 	}
 	function getItemManagerSelectors(){
 		return itemManager;

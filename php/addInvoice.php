@@ -4,7 +4,7 @@ if (!$link) {
     echo "Error: Unable to connect to MySQL." . PHP_EOL;
     exit;
 }
-$sno = $_POST['s_no'];
+//$sno = $_POST['s_no'];
 $unique_no = $_POST['unique_no'];
 $date = $_POST['date'];
 $invoice_no = $_POST['invoiceNo'];
@@ -17,7 +17,7 @@ $desc = $_POST['desc'];
 $table_item_list = $_POST['itemList'];
 $paymentData = $_POST['paymentData'];
 
-$sql = "INSERT INTO ".$myDb.".invoive_list (sno, unique_no, invoice_no, date, delear_name, amount, paid_amt, due_amt, payment_mode, items, description, payment_data) VALUES ('".$sno."', '".$unique_no."', '".$invoice_no."', '".$date."','".$dealer_name."','".$amount."','".$paidAmt."','".$dueAmt."','".$paymentMode."','".$table_item_list."','".$desc."', '".$paymentData."')";
+$sql = "INSERT INTO ".$myDb.".invoive_list (unique_no, invoice_no, date, delear_name, amount, paid_amt, due_amt, payment_mode, items, description, payment_data) VALUES ('".$unique_no."', '".$invoice_no."', '".$date."','".$dealer_name."','".$amount."','".$paidAmt."','".$dueAmt."','".$paymentMode."','".$table_item_list."','".$desc."', '".$paymentData."')";
 
 $stack = array();
 $obj = new stdClass();

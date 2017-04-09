@@ -4,7 +4,7 @@ if(typeof am == 'undefined'){
 am.addinvoice = {
 	sel: am.sel.getAddInvoiceSelectors(),
 	init: function(){
-		am.addinvoice.fetchDefaults();
+		//am.addinvoice.fetchDefaults();
 		$('#date').datepicker().datepicker("setDate", new Date());
 		am.addinvoice.bindEvents();
 	},
@@ -28,7 +28,8 @@ am.addinvoice = {
 			self.appendPaymentRow();
 		});
 		$(sel.deletePaymentIcon).off().on('click', function(){
-			sefl.deletePaymentRow();
+			var identifier = $(this).data('identifier');
+			self.deletePaymentRow(identifier);
 		});
 
 		self.table.bindEvents();	
@@ -143,7 +144,7 @@ am.addinvoice = {
 		callBackObj.bind('api_response', function(event, response){
 			var responseData = JSON.parse(response)[0];
 			if(responseData.status == 'success'){                
-				self.updateLastSerialNumber();
+				//self.updateLastSerialNumber();
 				am.popup.init(
 					{
 						title: 'Success',
@@ -180,7 +181,7 @@ am.addinvoice = {
 	getEntries: function(){
 		var self = am.addinvoice, sel = self.sel;
 		var data = {};
-		data.s_no = self.current_s_no;
+		//data.s_no = self.current_s_no;
 		data.unique_no = $.now();
 		data.date = $(sel.date).val();		
 		data.invoiceNo = $(sel.invoiceNo).val().trim();

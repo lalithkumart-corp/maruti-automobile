@@ -9,14 +9,21 @@ am.invoiceList = {
     },
     init: function(){
         am.invoiceList.fetchTableData();
+        am.invoiceList.bindEvents();
     },
     bindEvents: function(){
-
+        var self = am.invoiceList, sel = self.sel;
+        $(sel.deleteBtn).on('click', function(e){
+            if($(this).hasClass('disabled'))
+				return;
+			am.deleteInvoice.showConfirmation();
+        });
     },
     fetchTableData: function(){
         var self = am.invoiceList;
         var query = {
-            aQuery: 'Select * from '+am.database.schema+'.invoive_list;'
+            //aQuery: 'Select * from '+am.database.schema+'.invoive_list;'
+            aQuery: 'SELECT * FROM '+am.database.schema+'.invoive_list where moved_to_trash != "trashed" OR isnull(moved_to_trash);'
         };
         var callBackObj = am.core.getCallbackObject();
 		var request = am.core.getRequestData('../php/executequery.php', query, 'POST');
@@ -33,7 +40,7 @@ am.invoiceList = {
             tableData: tableData
         };
         var template = _.template(template_invoice_list_table, property);
-        $(sel.mainContainer).html(template);
+        $(sel.tableContainer).html(template);
         self.renderAsDataTable();
     },
     renderAsDataTable: function(){
@@ -84,7 +91,7 @@ am.invoiceList = {
     bindTableEvents: function(){
         var self = am.invoiceList, sel = self.sel;        
         $(sel.tableInvoiceCell).off().on('click', function(e){
-            debugger;
+            e.stopPropagation();
             var uniqueNo = $(this).data('unique-no');
             var myInvoiceData = self.getInvoiceData(uniqueNo);
             function onEditInvoicePopupShown(){
@@ -98,6 +105,17 @@ am.invoiceList = {
                 options.onHiddenCallback = self.onHiddenCallback;
                 options.className = "editInvoicePopup"
             am.commonPopup.init(options);
+        });
+        $(sel.tableRow).off().on('click', function(e){
+            if($(this).hasClass('anItemSelected')){
+        		$(this).removeClass('anItemSelected');				
+        	}else{
+	            $(this).addClass('anItemSelected');
+	        }
+			if($('.anItemSelected').length == 0)
+				$(sel.deleteBtn).addClass('disabled');				
+			else
+				$(sel.deleteBtn).removeClass('disabled');			
         });
     },
     getInvoiceData: function(uniqueNo){
@@ -240,4 +258,100 @@ am.editInvoice = {
         });
         am.core.call(request, callBackObj);
     }
+}
+
+am.deleteInvoice = {
+    showConfirmation: function(){
+        var msg ;
+        if($('.anItemSelected').length >1)
+            msg = 'Will move selected invoice\'s to Trash. Are you sure ?';
+        else
+            msg = 'Will move a selected invoice to Trash. Are you sure ?'
+            am.popup.init(
+            {
+                title: 'Confirmation',
+                desc: msg,
+                dismissBtnText: 'No',
+                buttons: ['Delete'],
+                callbacks: [am.deleteInvoice.moveToTrash]
+            });
+    },
+	moveToTrash: function(){
+        am.popup.hide();
+        var idLists = [];
+        var selectedRows = $('.anItemSelected');
+        _.each(selectedRows, function(aRow, index){
+            var identifier = $(aRow).find('.invoiceNo').data('unique-no');
+            idLists.push(identifier);
+        });
+		if(idLists.length != 0){
+			var obj = {};
+            obj.multiQuery = 'true';
+				obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
+
+				_.each(idLists, function(anId, index){
+					obj.aQuery += 'UPDATE '+am.database.schema+'.invoive_list SET moved_to_trash = "trashed" WHERE unique_no="'+anId+'";';
+				})
+								
+				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1';
+				var callBackObj = am.core.getCallbackObject();
+				var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+				callBackObj.bind('api_response', function(event, response){
+					response = JSON.parse(response);
+					if(response[0].status == true){
+						am.popup.init({
+							title: 'Success',
+							desc: 'Selected invoice has been moved to trash Successfully !',
+							dismissBtnText: 'Ok',
+                            onHiddenCallback: am.invoiceList.fetchTableData
+						});
+                    }else{
+						am.popup.init({
+							title: 'Error',
+							desc: 'Error!, Selected invoice could not be moved to trash! ',
+							dismissBtnText: 'Ok'
+						});
+					}
+				});
+				am.core.call(request, callBackObj);
+		}
+	},
+	
+	confirmDelete: function(options){ //Has not yet fully implemented. TODO: UI part for deleting an invoice completely from Database.
+        am.popup.hide();
+		var idLists = options.ids || [];
+		if(idLists.length != 0){
+			var obj = {};
+				obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
+
+				_.each(idLists, function(anId, index){
+					obj.aQuery += 'DELETE FROM automobile.invoive_list WHERE unique_no = "'+anId+'"';
+				});
+				
+				obj.aQuery += 'SET @num := 0';
+				obj.aQuery += 'UPDATE automobile.invoive_list SET sno = @num := (@num+1)';
+				obj.aQuery += 'ALTER TABLE automobile.invoive_list AUTO_INCREMENT = 1';
+
+				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1';
+				var callBackObj = am.core.getCallbackObject();
+				var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+				callBackObj.bind('api_response', function(event, response){
+					response = JSON.parse(response);
+					if(response[0].status == true){
+						am.popup.init({
+							title: 'Success',
+							desc: 'Selected invoice has been removed Successfully!',
+							dismissBtnText: 'Ok'
+						});							            
+					}else{
+						am.popup.init({
+							title: 'Error',
+							desc: 'Error!, Selected invoice could not be removed! ',
+							dismissBtnText: 'Ok'
+						});
+					}
+				});
+				am.core.call(request, callBackObj);
+		}
+	}
 }
