@@ -483,7 +483,7 @@ am.deleteInvoice = {
         }
         if(improperSelection){
             am.popup.init({
-                title: 'Warning',
+                title: '<b class="error">Warning</b>',
                 desc: msg,
                 dismissBtnText: btnText
             });
