@@ -3,23 +3,42 @@ if(typeof am == 'undefined'){
 }
 am.invoiceList = {
     sel: am.sel.getInvoiceListSelectors(),
-    viewMode: null,
+    viewMode: [],
     rerender: false,
     dataModel:{
         rawLists: null
     },
     init: function(){
-        am.invoiceList.viewMode = 'allInvoice';
+        am.invoiceList.viewMode.push('pendingInvoice');
         am.invoiceList.fetchTableData();
         am.invoiceList.bindEvents();
     },
     bindEvents: function(){
         var self = am.invoiceList, sel = self.sel;
+        $(sel.trashBtn).on('click', function(e){
+            if($(this).hasClass('disabled'))
+				return;
+            var isValidSelection = am.deleteInvoice.isValidSelection('trash');
+            if(isValidSelection)
+			    am.deleteInvoice.showConfirmation('trash');
+        });
+
+        $(sel.restoreBtn).on('click', function(e){
+            if($(this).hasClass('disabled'))
+				return;
+            var isValidSelection = am.deleteInvoice.isValidSelection('restore');
+            if(isValidSelection)
+			    am.deleteInvoice.showConfirmation('restore');
+        });
+
         $(sel.deleteBtn).on('click', function(e){
             if($(this).hasClass('disabled'))
 				return;
-			am.deleteInvoice.showConfirmation();
+            var isValidSelection = am.deleteInvoice.isValidSelection('delete');
+            if(isValidSelection)
+			    am.deleteInvoice.showConfirmation('delete');
         });
+
         $('body').on('click', function (event) {
             self.dismissAllPopUps(event);
         });
@@ -34,7 +53,7 @@ am.invoiceList = {
         var self = am.invoiceList;
         var query = {
             //aQuery: 'Select * from '+am.database.schema+'.invoive_list;'
-            aQuery: 'SELECT * FROM '+am.database.schema+'.invoive_list where moved_to_trash != "trashed" OR isnull(moved_to_trash);'
+            aQuery: 'SELECT * FROM '+am.database.schema+'.invoive_list;'
         };
         var callBackObj = am.core.getCallbackObject();
 		var request = am.core.getRequestData('../php/executequery.php', query, 'POST');
@@ -53,7 +72,7 @@ am.invoiceList = {
         var template = _.template(template_invoice_list_table, property);
         $(sel.tableContainer).html(template);
         self.renderAsDataTable();
-        $(sel.deleteBtn).addClass('disabled');
+        $(sel.trashBtn).addClass('disabled');
     },
     renderAsDataTable: function(){
         var self = am.invoiceList, sel = self.sel;
@@ -87,28 +106,53 @@ am.invoiceList = {
                         { "sWidth": "5%"},
                         { "sWidth": "5%"},
                         { "sWidth": "5%"}
-                    ]
+                    ],
+                    drawCallback: function( settings ) { //for updating serial number
+                         var serialNo = 1;
+                        _.each($(sel.table+' tbody tr'), function(aRow, index){                            
+                            if($(aRow).find('.dataTables_empty').length) //if no records in table, just return back .
+                                return;
+                            $(aRow).find('td:eq(0)').text(serialNo);
+                            serialNo++;
+                        });
+                        self.bindTableEvents();
+                        if(self.viewMode.indexOf('trashedInvoice') != -1){
+                            $(sel.restoreBtnContainer).show();
+                            $(sel.deleteBtnContainer).show();
+                        }else{
+                            $(sel.restoreBtnContainer).hide();
+                            $(sel.deleteBtnContainer).hide();
+                        }
+
+                        if(self.viewMode.indexOf('pendingInvoice') != -1 || self.viewMode.indexOf('closedInvoice') != -1)
+                            $(sel.trashBtnContainer).show();
+                        else
+                            $(sel.trashBtnContainer).hide();
+                        
+                        self.refreshBtnStates();
+                    }
         	});
         self.table = table;
 
         $.fn.dataTableExt.afnFiltering.push(
             function(oSettings, aData, iDataIndex){
                 var validRow = false;
-                if(self.viewMode != 'allInvoice'){
-                    if(self.viewMode == 'closedInvoice'){
-                        if(aData[1] == 'closed')
-                            validRow = true;
-                    }else if(self.viewMode == 'pendingInvoice'){
-                        if(aData[1] == 'open')
-                            validRow = true;
-                    }
-                }else
-                    validRow = true;
-                
-                return validRow;
+                if(self.viewMode.indexOf('closedInvoice') != -1){
+                    if(aData[1] == 'closed')
+                        validRow = true;
+                }
+                if(self.viewMode.indexOf('pendingInvoice') != -1){
+                    if(aData[1] == 'open')
+                        validRow = true;
+                }
+                if(self.viewMode.indexOf('trashedInvoice') != -1){
+                    if(aData[1] == 'trashed')
+                        validRow = true;
+                }
+               return validRow;
                 
             }
-        );
+        );   
     },
     tableComplete: function(){
 		var self = am.invoiceList, sel = self.sel;
@@ -124,6 +168,7 @@ am.invoiceList = {
             },200);
         }
 	},
+    
     bindTableEvents: function(){
         var self = am.invoiceList, sel = self.sel;  
         $(".dataTables_scrollHead [data-toggle = 'optionsPopover']").popover({trigger: "click"});
@@ -154,17 +199,19 @@ am.invoiceList = {
         	}else{
 	            $(this).addClass('anItemSelected');
 	        }
-			if($('.anItemSelected').length == 0)
-				$(sel.deleteBtn).addClass('disabled');				
-			else
-				$(sel.deleteBtn).removeClass('disabled');			
+			self.refreshBtnStates();
         });
 
         $('[data-toggle="optionsPopover"]').on('show.bs.popover', function(e) {
             setTimeout(function(){
-                $("input[value='"+self.viewMode+"']").attr('checked', true);
+                _.each(self.viewMode, function(value, index){
+                    $("input[value='"+value+"']").attr('checked', true);    
+                })
                 $(".viewModePopover  input").off().on('change' , function(e){
-                    self.viewMode = $(this).attr('value');
+                    self.viewMode = [];
+                    _.each($('.popoverContainer input[type="checkbox"]:checked()'), function(aCheckbox, index){
+                        self.viewMode.push($(aCheckbox).val());
+                    });
                     self.table.draw();
                 });
             },200);
@@ -173,8 +220,36 @@ am.invoiceList = {
             e.stopPropagation();
         });
     },
+    refreshBtnStates: function(){
+        var self = am.invoiceList;
+        self.trashBtnState();
+        self.restoreBtnState();
+        self.deleteBtnState();
+    },
+    trashBtnState: function(){
+        var self = am.invoiceList, sel = self.sel;
+        if($('.anItemSelected .open, .anItemSelected .closed').length == 0)
+            $(sel.trashBtn).addClass('disabled');				
+        else
+            $(sel.trashBtn).removeClass('disabled');	
+    },
+    restoreBtnState: function(){
+        var self = am.invoiceList, sel = self.sel;
+        if($('.anItemSelected .trashed').length == 0)
+            $(sel.restoreBtn).addClass('disabled');
+        else
+            $(sel.restoreBtn).removeClass('disabled');       
+    },
+    deleteBtnState: function(){
+        var self = am.invoiceList, sel = self.sel;
+        if($('.anItemSelected .trashed').length == 0)
+            $(sel.deleteBtn).addClass('disabled');				
+        else
+            $(sel.deleteBtn).removeClass('disabled');        
+    },
+
     getOptionsPopover: function(){
-        var optionsPopover = "<div class='popoverContainer'><label><input type = 'radio' value='pendingInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Pending Invoice's</label></br><label><input type = 'radio' value='closedInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Closed Invoice's</label></br><label><input type = 'radio' value='allInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>All Invoice's</label></div>";
+        var optionsPopover = "<div class='popoverContainer'><label><input type = 'checkbox' value='pendingInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Pending Invoice's</label></br><label><input type = 'checkbox' value='closedInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Closed Invoice's</label></br><div class='seperator'></div><label><input type = 'checkbox' value='trashedInvoice' name='options' class='optionsRadio'/><span class='secondaryRadio'></span>Trashed Invoice's</label></div>";
         return optionsPopover;
     },
     //get description of a particular invoice for displaying in a popover container
@@ -345,25 +420,82 @@ am.editInvoice = {
 }
 
 am.deleteInvoice = {
-    showConfirmation: function(){
-        var msg ;
-        if($('.anItemSelected').length >1)
-            msg = 'Will move selected invoice\'s to Trash. Are you sure ?';
-        else
-            msg = 'Will move a selected invoice to Trash. Are you sure ?'
-            am.popup.init(
-            {
-                title: 'Confirmation',
+    showConfirmation: function(action){
+        var msg, btnText, callback ;
+        // if($('.anItemSelected').length >1)
+        //     msg = 'Will move selected invoice\'s to Trash. Are you sure ?';
+        // else
+        switch(action){
+            case 'trash':
+                msg = 'Will move a selected invoice to Trash. Are you sure ?'
+                btnText = 'Move to trash';
+                callback = am.deleteInvoice.moveToTrash;
+                break;
+            case 'delete':
+                msg = 'Will permenantly delete the selected invoice(s). Are you Sure?';
+                btnText = 'Delete';
+                callback = am.deleteInvoice.confirmDelete;
+                break;
+            case 'restore':
+                msg = 'Will restore the selecte items. Are you sure?';
+                btnText = 'Restore';
+                callback = am.deleteInvoice.restore;
+                break;
+        }
+        
+        am.popup.init(
+        {
+            title: 'Confirmation',
+            desc: msg,
+            dismissBtnText: 'No',
+            buttons: [btnText],
+            callbacks: [callback]
+        });
+    },
+    isValidSelection: function(action){
+        var selectedItemsLength = $('.anItemSelected').length;
+        var improperSelection = false, msg, btnText, callback;
+        switch(action){
+            case 'trash':
+                var trashableItemsLength = $('.anItemSelected .open, .anItemSelected .closed').length;
+                if(selectedItemsLength !== trashableItemsLength){
+                    improperSelection = true;
+                    msg = 'Please select only Trashable items. '
+                    btnText = 'Ok';
+                }
+                break;
+            case 'delete':
+                var deleteableItemsLength = $('.anItemSelected .trashed').length;
+                if(selectedItemsLength !== deleteableItemsLength){
+                    improperSelection = true;
+                    msg = 'Please select already trashed items to delete permenantly. '
+                    btnText = 'Ok';
+                }
+                break;
+            case 'restore':
+                var restoreableItemsLength = $('.anItemSelected .trashed').length;
+                if(selectedItemsLength !== restoreableItemsLength){
+                    improperSelection = true;
+                    msg = 'Please select already trashed items to restore. '
+                    btnText = 'Ok';
+                }
+                break;
+        }
+        if(improperSelection){
+            am.popup.init({
+                title: 'Warning',
                 desc: msg,
-                dismissBtnText: 'No',
-                buttons: ['Delete'],
-                callbacks: [am.deleteInvoice.moveToTrash]
+                dismissBtnText: btnText
             });
+            return false;
+        }
+        return true;
     },
 	moveToTrash: function(){
         am.popup.hide();
         var idLists = [];
         var selectedRows = $('.anItemSelected');
+        
         _.each(selectedRows, function(aRow, index){
             var identifier = $(aRow).find('.invoiceNo').data('unique-no');
             idLists.push(identifier);
@@ -375,7 +507,7 @@ am.deleteInvoice = {
 
 				_.each(idLists, function(anId, index){
 					obj.aQuery += 'UPDATE '+am.database.schema+'.invoive_list SET moved_to_trash = "trashed" WHERE unique_no="'+anId+'";';
-				})
+				});
 								
 				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1';
 				var callBackObj = am.core.getCallbackObject();
@@ -403,20 +535,27 @@ am.deleteInvoice = {
 	
 	confirmDelete: function(options){ //Has not yet fully implemented. TODO: UI part for deleting an invoice completely from Database.
         am.popup.hide();
-		var idLists = options.ids || [];
+        var idLists = [];
+        var selectedRows = $('.anItemSelected');
+        _.each(selectedRows, function(aRow, index){
+            var identifier = $(aRow).find('.invoiceNo').data('unique-no');
+            idLists.push(identifier);
+        });
+		//var idLists = options.ids || [];
 		if(idLists.length != 0){
 			var obj = {};
+                obj.multiQuery = 'true';
 				obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
 
 				_.each(idLists, function(anId, index){
-					obj.aQuery += 'DELETE FROM automobile.invoive_list WHERE unique_no = "'+anId+'"';
+					obj.aQuery += 'DELETE FROM automobile.invoive_list WHERE unique_no = "'+anId+'";';
 				});
 				
-				obj.aQuery += 'SET @num := 0';
-				obj.aQuery += 'UPDATE automobile.invoive_list SET sno = @num := (@num+1)';
-				obj.aQuery += 'ALTER TABLE automobile.invoive_list AUTO_INCREMENT = 1';
+				obj.aQuery += 'SET @num := 0;';
+				obj.aQuery += 'UPDATE automobile.invoive_list SET sno = @num := (@num+1);';
+				obj.aQuery += 'ALTER TABLE automobile.invoive_list AUTO_INCREMENT = 1;';
 
-				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1';
+				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1;';
 				var callBackObj = am.core.getCallbackObject();
 				var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
 				callBackObj.bind('api_response', function(event, response){
@@ -425,7 +564,8 @@ am.deleteInvoice = {
 						am.popup.init({
 							title: 'Success',
 							desc: 'Selected invoice has been removed Successfully!',
-							dismissBtnText: 'Ok'
+							dismissBtnText: 'Ok',
+                            onHiddenCallback: am.invoiceList.fetchTableData
 						});							            
 					}else{
 						am.popup.init({
@@ -437,5 +577,46 @@ am.deleteInvoice = {
 				});
 				am.core.call(request, callBackObj);
 		}
-	}
+	},
+    restore: function(){
+        am.popup.hide();
+        var idLists = [];
+        var selectedRows = $('.anItemSelected');
+        
+        _.each(selectedRows, function(aRow, index){
+            var identifier = $(aRow).find('.invoiceNo').data('unique-no');
+            idLists.push(identifier);
+        });
+		if(idLists.length != 0){
+			var obj = {};
+            obj.multiQuery = 'true';
+				obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
+
+				_.each(idLists, function(anId, index){
+					obj.aQuery += 'UPDATE '+am.database.schema+'.invoive_list SET moved_to_trash = null WHERE unique_no="'+anId+'";';
+				});
+								
+				obj.aQuery += 'SET SQL_SAFE_UPDATES = 1';
+				var callBackObj = am.core.getCallbackObject();
+				var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+				callBackObj.bind('api_response', function(event, response){
+					response = JSON.parse(response);
+					if(response[0].status == true){
+						am.popup.init({
+							title: 'Success',
+							desc: 'Selected invoice has been RESTORED Successfully !',
+							dismissBtnText: 'Ok',
+                            onHiddenCallback: am.invoiceList.fetchTableData
+						});
+                    }else{
+						am.popup.init({
+							title: 'Error',
+							desc: 'Error!, Selected invoice could not be RESTORED! ',
+							dismissBtnText: 'Ok'
+						});
+					}
+				});
+				am.core.call(request, callBackObj);
+		}
+    }
 }

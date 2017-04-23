@@ -39,17 +39,22 @@
     width: 650px;
     height: 550px;
 }
-#invoice_list_page .delete-selected-invoice{
+#invoice_list_page .delete-selected-invoice,
+#invoice_list_page .trash-selected-invoice,
+#invoice_list_page .restore-selected-invoice{
     height: 20px;
     padding-left: 10px;
     vertical-align: top;
     cursor: pointer;
 }
-#invoice_list_page .delete-selected-invoice.disabled{
+#invoice_list_page .trash-selected-invoice.disabled,
+#invoice_list_page .delete-selected-invoice.disabled,
+#invoice_list_page .restore-selected-invoice.disabled{
     opacity: 0.2;
 }
+
 .invoice_list_table_container tr.anItemSelected{
-    background-color: lightgrey;
+    background-color: lightgrey !important;
 }
 .invoiceListOptions{
     background-image: url(/images/img-settings3.png);
@@ -73,7 +78,13 @@
     border-radius: 50%;
     margin-bottom: 1px;
 }
-.hiddenopen, .hiddenclosed{
+.invoice-list-table .trashed{
+    border: 5px solid #aeb3ae;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+.hiddenopen, .hiddenclosed, .hiddentrashed{
     display: none;
 }
 .viewModePopover.popover{
@@ -132,4 +143,22 @@
 .msg-string.error{
     color: red;
     font-weight: bold;
+}
+.invoice-list-table .invoiceNo:hover,
+.invoice-list-table .invoiceNo:focus{
+    color: blue;
+    font-weight: bold;
+}
+.invoice-list-table  tbody tr:hover,
+.invoice-list-table  tbody tr:focus{
+    background-color: aliceblue;
+}
+.seperator{
+    border: 1px solid lightgray;
+}
+#invoice_list_page .resore-item-block{
+    display: none;
+}
+#invoice_list_page .trashedItem{
+    text-decoration: line-through;
 }

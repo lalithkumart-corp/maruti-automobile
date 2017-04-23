@@ -59,7 +59,8 @@ am.popup = {
 		var $popup = am.popup;
 		if(!_.isUndefined($popup.buttons)){
 			_.each($popup.buttons, function(value, index){
-				var aButtonHtml = '<input type="button" id="btn'+index+value+'" value= "'+value+'"/>'
+				var trimmedVal = value.replace(/\s/g,'');
+				var aButtonHtml = '<input type="button" id="btn'+index+trimmedVal+'" value= "'+value+'"/>'
 				$('#msgFooterDiv').append(aButtonHtml);
 			});
 		}
@@ -72,7 +73,8 @@ am.popup = {
 		var $popup = am.popup;
 		if(!_.isUndefined($popup.buttons)){
 			_.each($popup.buttons, function(value, index){
-				$('#btn'+index+value).on('click', function(event){
+				var trimmedVal = value.replace(/\s/g,'');
+				$('#btn'+index+trimmedVal).on('click', function(event){
 					var callBackMeth = $popup.callbacks[index];
 					if(!_.isUndefined(callBackMeth))
 						callBackMeth();

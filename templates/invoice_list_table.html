@@ -27,14 +27,21 @@
                 </tr>
             </thead>
             <tbody>
-                <% _.each(tableData, function(aRow, index){ %>
-                    <tr>
+                <% _.each(tableData, function(aRow, index){
+                    var isTrashed = 'false', secClassName = '';
+                    if(aRow.moved_to_trash == 'trashed'){
+                        isTrashed = 'yes';
+                        secClassName = 'trashedItem';
+                    } %>
+                    <tr class="<%= secClassName %>">
                         <td><%= index+1 %></td>
                         <td>
-                            <% if(parseInt(aRow.due_amt) > 0){ %>
-                                <div class="open"><span class="hiddenopen">open</span></div>
+                            <% if(isTrashed == 'yes'){ %>
+                                <div class="trashed" data-view-mode="trashedInvoice"><span class="hiddentrashed">trashed</span></div>
+                            <% }else if(parseInt(aRow.due_amt) > 0){ %>
+                                <div class="open" data-view-mode="pendingInvoice"><span class="hiddenopen">open</span></div>
                             <% }else{ %>
-                                <div class="closed"><span class="hiddenclosed">closed</span></div>
+                                <div class="closed" data-view-mode="closedInvoice"><span class="hiddenclosed">closed</span></div>
                             <% } %>
                         </td>
                         <td class="invoiceNo" data-unique-no = <%= aRow.unique_no%> ><%= aRow.invoice_no %></td>
