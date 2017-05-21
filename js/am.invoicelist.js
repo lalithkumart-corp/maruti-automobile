@@ -396,6 +396,7 @@ am.editInvoice = {
     },
     updateInvoice: function(data){
         var sel = am.invoiceList.sel;
+        var popupSel = am.sel.getCommonPopupSelectors();
         var updated = false;
         var msg = 'Error in Update the invoice.';
         var msgClassName = 'error';
@@ -412,6 +413,7 @@ am.editInvoice = {
                 msgClassName = 'success';
             }
             $(sel.msgContainer +' .msg-string').addClass(msgClassName);
+            $(popupSel.bodyContainer).scrollTop(0);
             $(sel.msgContainer +' .msg-string').html(msg).fadeIn(500).delay(2000).fadeOut(1000);
             am.invoiceList.rerender = true;            
         });

@@ -60,6 +60,9 @@ am.sel = (function(){
 		deleteBtn: '#invoice_list_page .delete-selected-invoice',
 		restoreBtn: '#invoice_list_page .restore-selected-invoice'
 	}
+	var commonPopup = {
+		bodyContainer: '#commonModalBodyDiv'
+	}
 	function getItemManagerSelectors(){
 		return itemManager;
 	}
@@ -69,9 +72,13 @@ am.sel = (function(){
 	function getInvoiceListSelectors(){
 		return invoiceList;
 	}
+	function getCommonPopupSelectors(){
+		return commonPopup;
+	}
 	return{
 		getItemManagerSelectors : getItemManagerSelectors,
 		getAddInvoiceSelectors: getAddInvoiceSelectors,
-		getInvoiceListSelectors: getInvoiceListSelectors
+		getInvoiceListSelectors: getInvoiceListSelectors,
+		getCommonPopupSelectors: getCommonPopupSelectors
 	}
 })();
