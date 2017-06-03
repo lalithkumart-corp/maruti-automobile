@@ -6,6 +6,7 @@ am.addinvoice = {
 	init: function(){
 		//am.addinvoice.fetchDefaults();
 		$('#date').datepicker().datepicker("setDate", new Date());
+		am.autocompleter.addInvoice.init();
 		am.addinvoice.bindEvents();
 	},
 	bindEvents: function(){
@@ -151,6 +152,7 @@ am.addinvoice = {
 						desc: 'New Invoice has been created sccesfully ! ' ,
 						dismissBtnText: 'OK',
 						onHiddenCallback: function(){
+										am.autocompleter.addInvoice.updateData('delear_name');
 										self.clearFields();
 									}
 					});          

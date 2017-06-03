@@ -8,6 +8,66 @@ am.autocompleter = {
 	bindEvents: function(){
 		
 	},
+	addInvoice:{
+		dealerNameList: [],
+		selectors: am.sel.getAddInvoiceSelectors(),
+		dbColName: {
+			dealerName: 'delear_name'
+		},
+		init: function(){
+			var self = am.autocompleter.addInvoice;
+			self.getData(self.dbColName.dealerName);
+		},
+		getData: function(listName){
+			var self = am.autocompleter.addInvoice;
+			var queryObj = {
+				aQuery: 'SELECT distinct '+ self.dbColName.dealerName +' FROM '+am.database.schema+'.invoive_list'
+			}
+			var callBackObj = am.core.getCallbackObject();
+			var request = am.core.getRequestData('../php/executequery.php', queryObj, 'POST');
+			callBackObj.bind('api_response', function(event, response){
+				response = JSON.parse(response);
+				self.setData(response, listName);
+			});
+			am.core.call(request, callBackObj);
+		},
+		setData: function(data, listName){
+			var self = am.autocompleter.addInvoice;
+			switch(listName){
+				case self.dbColName.dealerName:
+					self.dealerNameList = [];
+					_.each(data , function(value, key){
+						self.dealerNameList.push(value[self.dbColName.dealerName]);
+					});
+					break;
+			}
+			self.fillData(listName);
+		},
+		fillData: function(listName){
+			var self = am.autocompleter.addInvoice;
+			switch(listName){
+				case self.dbColName.dealerName:
+					listData = $.map(self.dealerNameList, function (listItem) { return { value: listItem, data: { category: 'Name' }}; });
+					elem = self.selectors.dealerName;
+					break;
+			}
+			$(elem).devbridgeAutocomplete({
+	            lookup: listData,
+	            minChars: 0,
+	            onSelect: function (suggestion) {
+	                $('#selection').html('You selected: ' + suggestion.value + ', ' + suggestion.data.category);
+	            },
+	            showNoSuggestionNotice: true,
+	            noSuggestionNotice: 'Sorry, no matching results',
+	            groupBy: 'category'
+	        });
+		},
+		updateData: function(columnName){
+			var self = am.autocompleter.addInvoice;
+			self.getData(columnName);
+		}
+
+	},
 	itemManager:{
 		itemNosList : [],
 		companyNameList: [],
