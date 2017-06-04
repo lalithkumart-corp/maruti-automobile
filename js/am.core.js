@@ -7,18 +7,21 @@ $(document).on('ready',function(){
 am.core = {
 	bindInitialEvents : function(){
 		$('#addInvoice').on('click', function(e){
+			am.common.currentPage = 'addInvoice';
 			var property = {};
 			var template = _.template(template_htmlstr_addInvoice, property);
 			$('.mainContent').html(template);
 			am.addinvoice.init();
 		});
 		$('#itemManager').on('click', function(e){
+			am.common.currentPage = 'itemManager';
 			var property = {};
 			var template = _.template(template_htmlstr_item_manager, {});
 			$('.mainContent').html(template);
 			am.itemManager.init();
 		});
 		$('#viewAllInvoice').on('click', function(e){
+			am.common.currentPage = 'invoiceList';
 			var property = {};
 			var template = _.template(template_invoice_list_page, property);
 			$('.mainContent').html(template);
