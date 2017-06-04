@@ -48,6 +48,14 @@ am.invoiceList = {
                 self.dismissAllPopUps(event);
             }
         });
+        $(sel.exportBtn).off().on('click', function(e){
+            var options = {
+                columnList : ['Status', 'Invoice No','Date', 'Name', 'Actual Amt', 'Paid Amt', 'Due Amt', 'Description'],
+                tableSelector: '.invoice-list-table',
+                dataEngine: self.makeExportData
+            };
+            am.export.init(options);
+        });
     },
     fetchTableData: function(){
         var self = am.invoiceList;
@@ -292,6 +300,33 @@ am.invoiceList = {
                 $(this).popover('hide');
             }
         });		     
+    },
+    makeExportData: function(){
+        var self = am.invoiceList, sel = self.sel, data = '';
+        var descriptionColumn = 8, statusColumn = 1;
+        var totalColumnCount = am.export.columnList.length;
+        var rowLength = $(sel.table+' tbody tr').length;
+        for(i=0; i< rowLength; i++){
+            var newRowData = true;
+            data += i+1 + ',';
+            for(j=1; j <= totalColumnCount; j++){
+                var currentColIndex = j;
+                if(am.export.isColumnExcluded(currentColIndex))
+                    continue;
+                if(j == descriptionColumn){
+                    var descElm = $(sel.table+' tbody tr:eq('+ i +') td:eq('+ j +') div').data('content');
+                    var descText = $(descElm).text();
+                    data += '"'+ descText + '"';
+                }
+                else if(j == statusColumn){
+                    data += '"'+ $(sel.table+' tbody tr:eq('+ i +') td:eq('+ j +') div').text() + '"';
+                }else
+                    data += '"'+ $(sel.table+' tbody tr:eq('+ i +') td:eq('+ j +')').text() + '"';
+                data += ',';
+            }
+            data += '\n';
+        }
+        return data;
     }
 }
 

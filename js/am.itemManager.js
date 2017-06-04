@@ -383,7 +383,8 @@ am.itemManager = {
 			var $itemManager = am.itemManager, sel = am.sel.getItemManagerSelectors();
 			$(sel.exportItemDetails).on('click', function(e){
 				var options = {
-					columnList:['Item No', 'Company', 'Item Name', 'Quality', 'Price']
+					columnList:['Item No', 'Company', 'Item Name', 'Quality', 'Price'],
+					tableSelector: '#item_manager_table'
 				}
 				am.export.init(options);
 			});

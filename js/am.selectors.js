@@ -58,7 +58,8 @@ am.sel = (function(){
 		restoreBtnContainer: '#invoice_list_page .restore-btn-container',
 		trashBtn: '#invoice_list_page .trash-selected-invoice',
 		deleteBtn: '#invoice_list_page .delete-selected-invoice',
-		restoreBtn: '#invoice_list_page .restore-selected-invoice'
+		restoreBtn: '#invoice_list_page .restore-selected-invoice',
+		exportBtn: '#invoice_list_page .export-image'
 	}
 	var commonPopup = {
 		bodyContainer: '#commonModalBodyDiv'

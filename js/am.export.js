@@ -5,8 +5,12 @@ am.export = {
 	columnList: undefined,
 	init: function(options){
 		var $this = am.export;
-		if(options.columnList != undefined)
+		if(typeof options.columnList != undefined)
 			$this.columnList = options.columnList;
+		if(!_.isUndefined(options.tableSelector))
+			$this.tableSelector = options.tableSelector;
+		if(!_.isUndefined(options.dataEngine))
+			$this.dataEngine = options.dataEngine;
 		$this.showColumnList();
 	},
 	showColumnList: function(){
@@ -37,21 +41,23 @@ am.export = {
                am.export.doExport(content);
         }, 100);
 	},
+	isColumnExcluded: function(columnIndex){
+		var $this = am.export, filteredColList = $this.filteredColList;
+		columnIndex = columnIndex.toString();
+		var isColumnExcluded = false;
+		if(filteredColList.indexOf(columnIndex) == -1)
+			isColumnExcluded = true;
+		return isColumnExcluded;
+	},
 	getExportContent: function(){
 		var $this = am.export, filteredColList = $this.filteredColList;
 		var totalColumnCount = $this.columnList.length;
 		var data= '';
-		function isColumnExcluded(columnIndex){
-			columnIndex = columnIndex.toString();
-			var isColumnExcluded = false;
-			if(filteredColList.indexOf(columnIndex) == -1)
-				isColumnExcluded = true;
-			return isColumnExcluded;
-		}
+		
 		//table-column Header data
 		data += 'S.No ,';
 		for(col= 1; col <= totalColumnCount; col++){
-			if(isColumnExcluded(col))
+			if($this.isColumnExcluded(col))
 				continue;
 			data += $this.columnList[col-1];
 			data += ',';
@@ -59,19 +65,23 @@ am.export = {
 		data += '\n';
 
 		//table-body row data
-		var rowLength = $('#item_manager_table tbody tr').length;
-		for(i=0; i< rowLength; i++){
-			var newRowData = true;
-			data += i+1 + ',';
-			debugger;
-			for(j=1; j <= totalColumnCount; j++){
-				var currentColIndex = j;
-				if(isColumnExcluded(currentColIndex))
-					continue;
-				data += '"'+ $('#item_manager_table tbody tr:eq('+ i +') td:eq('+ j +')').text() + '"';
-				data += ',';
+		if(!_.isUndefined($this.dataEngine))
+			data += $this.dataEngine();
+		else{		
+			var rowLength = $($this.tableSelector+' tbody tr').length;
+			for(i=0; i< rowLength; i++){
+				var newRowData = true;
+				data += i+1 + ',';
+				debugger;
+				for(j=1; j <= totalColumnCount; j++){
+					var currentColIndex = j;
+					if($this.isColumnExcluded(currentColIndex))
+						continue;
+					data += '"'+ $($this.tableSelector+' tbody tr:eq('+ i +') td:eq('+ j +')').text() + '"';
+					data += ',';
+				}
+				data += '\n';
 			}
-			data += '\n';
 		}
 		return data;
 	},

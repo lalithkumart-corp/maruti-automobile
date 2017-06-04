@@ -50,7 +50,7 @@
                         <td><%= aRow.amount %></td>
                         <td><%= aRow.paid_amt%></td>
                         <td><%= aRow.due_amt%></td>
-                        <td>
+                        <td>                            
                             <div class="invoiceDescPopover"
                                 data-toggle = 'invoice-desc-popover'
                                 data-placement = 'right'
@@ -59,7 +59,7 @@
                                 data-title = "<p style='float :left;'><%= aRow.invoice_no%></p><p style='float :right;'><%= aRow.date%></p>"
                                 data-container = 'body'
                                 data-class = "invoice-desc-popover"
-                            > 
+                            > <i class="fa fa-comment-o"></i>
                             </div>
                         </td>
                     </tr>

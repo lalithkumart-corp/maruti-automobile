@@ -41,7 +41,8 @@
 }
 #invoice_list_page .delete-selected-invoice,
 #invoice_list_page .trash-selected-invoice,
-#invoice_list_page .restore-selected-invoice{
+#invoice_list_page .restore-selected-invoice,
+#invoice_list_page .export-image{
     height: 20px;
     padding-left: 10px;
     vertical-align: top;
@@ -126,9 +127,9 @@
 }
 .invoiceDescPopover{
     cursor: pointer;
-    background-image: url(/images/triple-dot.png);
-    width: 20px;
-    height: 20px;
+    /*background-image: url(/images/triple-dot.png); */
+    width: 18px;
+    /*height: 20px;*/
     background-size: 19px;
     background-repeat: no-repeat;
     margin-left: 16px;
@@ -161,4 +162,29 @@
 }
 #invoice_list_page .trashedItem{
     text-decoration: line-through;
+}
+
+.exportPickColList .commonModalBodyDiv {
+    min-height: 200px;
+    max-height: 315px;
+    overflow-x: hidden;
+}
+.export-excel i,
+.restore-btn-container i,
+.delete-btn-container i,
+.trash-btn-container i,
+.invoiceDescPopover i{
+    font-size: 18px;
+}
+.export-excel i:hover,
+.export-excel i:focus,
+.restore-btn-container i:hover,
+.restore-btn-container i:focus,
+.delete-btn-container i:hover,
+.delete-btn-container i:focus,
+.trash-btn-container i:hover,
+.trash-btn-container i:focus,
+.invoiceDescPopover i:hover,
+.invoiceDescPopover i:focus{
+    color: orange;
 }
