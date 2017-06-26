@@ -213,7 +213,7 @@ am.addinvoice = {
 			aRowData = aRowData.join(':');
 			tableData.push(aRowData);
 		});
-		tableData = tableData.join(',');
+		tableData = tableData.join('@@');
 
 		data.itemList = tableData;
 

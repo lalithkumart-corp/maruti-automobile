@@ -400,11 +400,11 @@ am.editInvoice = {
 
         //fill ite table details
         var items = data.items;
-        var itemLists = items.split(',');
+        var itemLists = items.split('@@');
         var elm = '';
         _.each(itemLists, function(anItemData, index){
             var anItemDetails = anItemData.split(':'), val='';
-            if(anItemDetails[2].toLowerCase() == 'original')
+            if(!_.isUndefined(anItemDetails[2]) && anItemDetails[2].toLowerCase() == 'original')
                 val = 'checked';
         
             elm += '<tr>';
