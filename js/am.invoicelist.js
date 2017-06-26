@@ -144,21 +144,24 @@ am.invoiceList = {
 
         $.fn.dataTableExt.afnFiltering.push(
             function(oSettings, aData, iDataIndex){
-                var validRow = false;
-                if(self.viewMode.indexOf('closedInvoice') != -1){
-                    if(aData[1] == 'closed')
-                        validRow = true;
+                if(am.common.currentPage == 'invoiceList'){
+                    var validRow = false;
+                    if(self.viewMode.indexOf('closedInvoice') != -1){
+                        if(aData[1] == 'closed')
+                            validRow = true;
+                    }
+                    if(self.viewMode.indexOf('pendingInvoice') != -1){
+                        if(aData[1] == 'open')
+                            validRow = true;
+                    }
+                    if(self.viewMode.indexOf('trashedInvoice') != -1){
+                        if(aData[1] == 'trashed')
+                            validRow = true;
+                    }
+                    return validRow;
+                }else{
+                    return true;
                 }
-                if(self.viewMode.indexOf('pendingInvoice') != -1){
-                    if(aData[1] == 'open')
-                        validRow = true;
-                }
-                if(self.viewMode.indexOf('trashedInvoice') != -1){
-                    if(aData[1] == 'trashed')
-                        validRow = true;
-                }
-               return validRow;
-                
             }
         );   
     },
