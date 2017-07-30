@@ -21,3 +21,5 @@ var template_addinvoice_payment_adder = <?php echo jsonStringify('../templates/a
 var template_invoice_list_page = <?php echo jsonStringify('../templates/invoicelist.html'); ?> ; 
 
 var template_invoice_list_table = <?php echo jsonStringify('../templates/invoice_list_table.html'); ?> ; 
+
+var template_input_stock_main = <?php echo jsonStringify('../templates/input_invoice_main.html'); ?>;

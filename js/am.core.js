@@ -27,6 +27,14 @@ am.core = {
 			$('.mainContent').html(template);
 			am.invoiceList.init();
 		});
+
+		$('#stock-input').on('click', function(e){
+			am.common.currentPage = 'stockinput';
+			var property = {};
+			var template = _.template(template_input_stock_main, property);
+			$('.mainContent').html(template);
+			am.stock.input.init();	
+		});
 	},
 	getCallbackObject : function() {
 		callback = $({});
