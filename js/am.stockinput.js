@@ -22,7 +22,8 @@ am.stock.input = (function(){
         itemPartNo: 'ip',
         itemPrice: 'ir',
         itemCount: 'ic',
-        itemGSTTax: 'it'
+        itemGSTTax: 'it',
+        itemValue: 'iv'
     };
 
     var cls = {
@@ -34,9 +35,12 @@ am.stock.input = (function(){
     };
 
     var sel = {
-        needACBrand: '.' + cls.needACBrand,
-        needACItem: '.' + cls.needACItem,
-        needACPartno: '.' + cls.needACPartno,
+        invoiceNo: '.input-invoice-main .invoice-no',
+        dealerName: '.input-invoice-main .delaer-name',
+        invoiceDate: '.input-invoice-main .invoice-date',        
+        needACBrand: '.input-invoice-main .' + cls.needACBrand,
+        needACItem: '.input-invoice-main .' + cls.needACItem,
+        needACPartno: '.input-invoice-main .' + cls.needACPartno,
         tableBody: '.input-invoice-main .table-container tbody',
         itemNameField: '.item-name-field',
         brandNameField: '.brand-name-field',
@@ -47,8 +51,16 @@ am.stock.input = (function(){
         valueField: '.value-field',
         itemIdCell: '.item-id-cell',
         itemId: '.item-id',
-        addRow: '.' + cls.addRow,
-        needFocus: '.' + cls.needFocus,
+        addRow: '.input-invoice-main .' + cls.addRow,
+        needFocus: '.input-invoice-main .' + cls.needFocus,
+
+        textArea: '.input-invoice-main .right-invoice-container .notes-textarea',
+        actualAmt: '.input-invoice-main .right-invoice-container .actual-amt',
+        paidAmt: '.input-invoice-main .right-invoice-container .paid-amt',
+        dueAmt: '.input-invoice-main .right-invoice-container .due-amt',
+        paymentRow: '.input-invoice-main .right-invoice-container .payment-row',
+        paymentMode: '.input-invoice-main .right-invoice-container .paymentMode',
+        paymentDate: '.input-invoice-main .right-invoice-container .payment-date',
         submitBtn: '.submit-invoice-stock-btn'
     };
 
@@ -59,11 +71,18 @@ am.stock.input = (function(){
     }
     function initialSetup(){
         moveTabFocus();
+        $(sel.invoiceDate).datepicker().datepicker("setDate", new Date());
     }
     function bindEvents(){
         bindItemBlurEvent();
         bindAddRowEvent();
         bindSubmitEvent();
+        bindRightPaneEvents();
+    }
+
+    function editInvoicePopupController(){
+        fetchAutoCompleterLists();
+        bindEvents();
     }
 
     function bindItemBlurEvent(){
@@ -77,10 +96,19 @@ am.stock.input = (function(){
             blurListener(this);
         });
         $(sel.priceField).off('blur').on('blur', function(e){
-            calculateValue(this);
+            calcValueForItem(this);
         });
         $(sel.countField).off('blur').on('blur', function(e){
-            calculateValue(this);
+            calcValueForItem(this);
+        });
+    }
+
+    function bindRightPaneEvents(){
+        $(sel.actualAmt).off().on('keyup', function(e){
+            calculateAmount();
+        });
+        $(sel.paidAmt).off().on('keyup', function(e){
+            calculateAmount();
         });
     }
 
@@ -99,13 +127,25 @@ am.stock.input = (function(){
         }
     }
 
-    function calculateValue(thisRefer){
+    function calcValueForItem(thisRefer){
         var itsParent = $(thisRefer).closest('tr');
         var unitPrice = $(itsParent).find(sel.priceField).val();
         unitPrice = parseInt(unitPrice);
         var count = $(itsParent).find(sel.countField).val();
         count = parseInt(count);
         $(itsParent).find(sel.valueField).val(unitPrice * count);
+    }
+
+    function calculateAmount(){        
+		var amount = $(sel.actualAmt).val();
+		var givenAmt = 0;
+		_.each($(sel.paidAmt), function(elm, inde){
+			var price = $(elm).val();
+			if(price !== "")
+				givenAmt += parseInt(price);
+		});
+		var dueAmount = amount - givenAmt;
+		$(sel.dueAmt).text(dueAmount);
     }
 
     function bindAddRowEvent(){
@@ -124,8 +164,9 @@ am.stock.input = (function(){
     function bindSubmitEvent(){
         $(sel.submitBtn).off().on('click', function(e){
             var stockDetails = getStockDetails();
-            updateStock(stockDetails);
-            //var invoiceDetails = getInvoiceDetails();
+            updateStock(stockDetails, afterStockUpdate);
+            var invoiceDetails = getInvoiceDetails();
+            updateInvoiceTable(invoiceDetails, afterInvoiceUpdate);
         });
     }
 
@@ -137,7 +178,8 @@ am.stock.input = (function(){
     function fetchAutoCompleterLists(){
        var self = am.invoiceList;
        var aCallBackObj = am.core.getCallbackObject();
-       aCallBackObj.bind('api_response', function(event, response){            
+       aCallBackObj.bind('api_response', function(event, response){  
+            dataObj.raw_stock = JSON.parse(response);
             parseAutoCompleterResponse();
             bindAutoCompleterList();
         });
@@ -334,28 +376,17 @@ am.stock.input = (function(){
         return validateArr;
     }
 
-
     function fetchStockListFromDB(callBack){
-        var query = {
-            aQuery: 'SELECT * FROM '+am.database.schema+'.stock;'
-        };
-        var callBackObj = am.core.getCallbackObject();
-		var request = am.core.getRequestData('../php/executequery.php', query, 'POST');
-		callBackObj.bind('api_response', function(event, response){
-            var data = JSON.parse(response);
-            dataObj.raw_stock = data;
-            if(!_.isUndefined(callBack) && callBack !== '')
-                callBack.trigger('api_response', response);
-        });
-        am.core.call(request, callBackObj);
+        am.stock.core.fetchStockListFromDB(callBack);        
     }
 
-    function updateStock(stockDetails){
+    function updateStock(stockDetails, callbackObject){
         var callBackOb = am.core.getCallbackObject();
         var optional = {
             stockDetails: stockDetails
         }
-		callBackOb.bind('api_response', function(event, response){                  
+		callBackOb.bind('api_response', function(event, response){          
+            dataObj.raw_stock = JSON.parse(response);        
             var obj = {};
             var query = '';
             _.each(stockDetails, function(anItemDetail, index){
@@ -369,29 +400,175 @@ am.stock.input = (function(){
             obj.aQuery += query;
             obj.aQuery += 'SET SQL_SAFE_UPDATES = 1;';
             var callBackObj = am.core.getCallbackObject();
+            debugger;
 			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
 			callBackObj.bind('api_response', function(event, response){                
-                setTimeout(function(){ //refresh will fetch the stcoklist from DB. But the DB has just now got updated, and so fetching with delay . (To prevent fetching the old list from DB)Making delay, to let the DB to be updated
-                    refresh();
-                }, 500);                
+                if(!_.isUndefined(callbackObject))
+                    callbackObject(response);
+                               
             });
             am.core.call(request, callBackObj);
         });
         fetchStockListFromDB(callBackOb);
     }
 
+    function afterStockUpdate(response){
+        response = JSON.parse(response);
+        if(response[0].status == true){
+            am.popup.init({
+                title: 'STOCK - updated!',
+                desc: 'Stock has been updated Successfully !',
+                dismissBtnText: 'Ok'
+            });
+            setTimeout(function(){ //refresh will fetch the stcoklist from DB. But the DB has just now got updated, and so fetching with delay . (To prevent fetching the old list from DB)Making delay, to let the DB to be updated
+                if(am.common.currentPage == 'stockinput')
+                    refresh();
+            }, 500);
+        }else{
+            am.popup.init({
+                title: 'Error in Updating STOCK',
+                desc: 'Could not able to update the stock details ',
+                dismissBtnText: 'Ok'
+            });
+        }         
+    }
     function refresh(){
-        clearTableEntries();
+        clearEntries();
         bindAddRowEvent();
         bindItemBlurEvent();
         fetchAutoCompleterLists();
     }
 
-    function clearTableEntries(){
+    function clearEntries(){
+        $(sel.invoiceNo).val('');
+        $(sel.dealerName).val('');
+        $(sel.textArea).val('');
+        $(sel.actualAmt).val('');
+        $(sel.paidAmt).val('');
+        $(sel.dueAmt).html('-');        
         $('.autocomplete-suggestions').remove(); //remove autocomplete list
         var rowHtmlstr = getRowData();
         $(sel.tableBody).html(rowHtmlstr);
     }
+
+    function dismiss(){
+        $('.autocomplete-suggestions').remove(); //remove autocomplete list
+    }
+
+    /*START: getters */
+    function getInvoiceDetails(){
+        var invoiceDetail = {
+            uniqueIdentifier: $.now(),
+            invoiceNo: getValue('invoiceNo'),
+            delearName: getValue('delearName'),
+            invoiceDate: getValue('invoiceDate'),
+            itemJson: JSON.stringify(getItemsJson()),
+            notes: getValue('notes'),
+            amount: getValue('actualAmount'),
+            paidAmt: getTotalPaidAmt(),
+            paymentDetails: JSON.stringify(getPaymentDetails()),
+            dueAmount: getValue('dueAmount')
+        };
+        return invoiceDetail;
+    }
+
+    function getValue(identifier){
+        var returnVal;
+        switch(identifier){
+            case 'invoiceNo':
+                returnVal = $(sel.invoiceNo).val().trim();
+                break;
+            case 'delearName':
+                returnVal = $(sel.dealerName).val().trim();
+                break;
+            case 'invoiceDate':
+                returnVal = $(sel.invoiceDate).val().trim();
+                break;
+            case 'notes':
+                returnVal = $(sel.textArea).val().trim();
+                break;
+            case 'actualAmount':
+                returnVal = $(sel.actualAmt).val().trim();
+                break;
+            case 'dueAmount':
+                returnVal = $(sel.dueAmt).text();
+                break;
+        }
+        return returnVal;
+    }
+
+    function getItemsJson(){
+        var arr = [];
+        _.each($(sel.tableBody+' tr'), function(aRow, index){
+            var anObj = {
+                [map.itemId] : $(aRow).find('td:eq(1)').text(),
+                [map.itemBrand] : $(aRow).find('td:eq(2) input').val(),
+                [map.itemName] : $(aRow).find('td:eq(3) input').val(),
+                [map.itemPartNo] : $(aRow).find('td:eq(4) input').val(),
+                [map.itemPrice] : $(aRow).find('td:eq(5) input').val(),
+                [map.itemCount] : $(aRow).find('td:eq(6) input').val(),
+                [map.itemGSTTax] : $(aRow).find('td:eq(7) input').val(),
+                [map.itemValue]: $(aRow).find('td:eq(8) input').val()
+            };
+            arr.push(anObj);
+        });
+        return arr;
+    }
+
+    function getPaymentDetails(){
+        var arr = [];
+        _.each($(sel.paymentRow), function(aPayment, index){
+            var anObj = {
+                pv: $(aPayment).find($(sel.paidAmt)).val(),
+                pm: $(aPayment).find($(sel.paymentMode)).val()
+            };
+            if($(aPayment).find($(sel.paymentDate)).length)
+                anObj.pd = $(aPayment).find($(sel.paymentDate)).val();
+            else
+                anObj.pd = $(sel.invoiceDate).val();
+            arr.push(anObj);
+        });
+        return arr;
+    }
+
+    function getTotalPaidAmt(){
+        var price = 0;
+        _.each($(sel.paymentRow), function(aPayment, index){
+            var aPrice = $(aPayment).find($(sel.paidAmt)).val();
+            aPrice = parseInt(aPrice);
+            price += aPrice;            
+        });
+        return price;
+    }
+
+
+    /*END: getters */
+
+
+    /*START: Databae updates */    
+    function updateInvoiceTable(data, callbackObject){
+        var obj = {};
+        obj.aQuery = "INSERT INTO "+am.database.schema+".invoice_list_new (unique_identifier, invoice_no, dealer_name, date, invoice_details, invoice_note, amount, paid_amount, payment_data, due_amount) VALUES ('"+data.uniqueIdentifier+"', '"+data.invoiceNo+"', '"+data.delearName+"', '"+data.invoiceDate+"', '"+data.itemJson+"', '"+data.notes+"', '"+data.amount+"', '"+data.paidAmt+"', '"+data.paymentDetails+"', '"+data.dueAmount+"' )";
+        var callBackObj = am.core.getCallbackObject();
+        var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+        callBackObj.bind('api_response', function(event, response){     
+            if(!_.isUndefined(callbackObject))
+                callbackObject(response);           
+            console.log(response);
+        });
+        am.core.call(request, callBackObj);                        
+    }
+    function afterInvoiceUpdate(response){
+        // response = JSON.parse(response);
+        // if(response[0].status == true){
+        //     am.popup.init({
+        //         title: 'Success',
+        //         desc: 'Invoice has been added Successfully !',
+        //         dismissBtnText: 'Ok'
+        //     });
+        // }
+    }
+    /*END: Databae updates */
 
     var helper = {
         getInsertItemQuery: function(itemDetail){
@@ -434,7 +611,12 @@ am.stock.input = (function(){
 
     return {
         init: init,
-        refresh: refresh
+        refresh: refresh,
+        dismiss: dismiss,
+        editInvoicePopupController: editInvoicePopupController,
+        getStockDetails: getStockDetails,
+        updateStock: updateStock,
+        getInvoiceDetails: getInvoiceDetails
     }
 })();
 

@@ -4,15 +4,18 @@
         <div class='col-sm-12 col-xs-12'>
             <div class='a-form-group col-sm-3 col-xs-3'>
                 <label>Invoice No:</label>
-                <input type='text' class="only-b-border" value=''/>
+                <input type='text' class="only-b-border invoice-no" value=''/>
             </div>
             <div class='a-form-group col-sm-3 col-xs-3'>
                 <label>Dealer Name:</label>
-                <input type='text' class="only-b-border" value='Ashwanth'/>
+                <input type='text' class="only-b-border delaer-name" value=''/>
             </div>
             <div class='a-form-group pull-right col-sm-3 col-xs-3'>
                 <label>Date:</label>
-                <input type='text' class='' value='16/07/2017'/>
+                <input type="text" id="invoice-date" class="invoice-date"/>
+			      <span class="add-on">
+			        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+			      </span>
             </div>
         </div>
         <div class='col-sm-12 col-xs-12 a-form-group table-container'>
@@ -62,18 +65,43 @@
         </div>
     </div>
 
+<div class='effect-on-edit-invoice-popup'></div>
 
-    <div class="col-sm-3 col-xs-3">
+    <div class="col-sm-3 col-xs-3 right-invoice-container">
         <div class='col-sm-12 col-xs-12'>
-            <textarea rows="4" cols="50">My Notes...</textarea>
+            <textarea rows="4" cols="50" class='notes-textarea' placeholder="My Notes..."></textarea>
         </div>
-        <div class='col-sm-12 col-xs-12' style='padding-top: 150px; text-align: center;'>
-            <label class='col-sm-4 col-xs-4'><span>Amount: </span></label><span>22040 /-</span><div class='clearfix'></div>
-            <label class='col-sm-4 col-xs-4'><span>GST: </span></label><span>3592 /-</span><div class='clearfix'></div>
-            <label class='col-sm-4 col-xs-4'><span>TOTAL:</span></label><span>25632 /-</span><div class='clearfix'></div>
+        <div class='row amount-details'>
+            <div class='col-sm-12 col-xs-12'>
+                <label class='amt-label'>Value: </label>
+                <input type='number' class='actual-amt'/>
+            </div>
+            <div class='clearfix'></div>     
+            <div class='col-sm-12 col-xs-12'>                
+                <div class='payment-row initial-payment-row'>
+                    <label class='amt-label'>Paid: </label>
+                    <input type='number' class='paid-amt'/>
+                    <select class="form-control paymentMode" data-identifier="initialPaymentRow">
+                        <option>Cash</option>
+                        <option>Card</option>
+                        <option>Cheque</option>
+                    </select>
+                    <div class="add-payment-detail-icon" >
+						<img src="/images/plus2.png">
+					</div>
+                </div>
+            </div>
+            <div class='clearfix'></div>
+
+            <div class='col-sm-12 col-xs-12'>
+                <label class='amt-label'>Balance:</label>
+                <span class='due-amt'>0</span>
+            </div>
+            <div class='clearfix'></div>
             <div class='' style='margin-top: 40px; text-align: center;'>
                 <input type='button' value='SUBMIT' class='submit-invoice-stock-btn' style='padding: 20px 50px; background-color: #c7c7ff; font-weight: bold;'/>
             </div>
         </div>
     </div>
+    <div class='clearfix'></div>
 </div>

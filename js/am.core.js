@@ -32,10 +32,32 @@ am.core = {
 			am.common.currentPage = 'stockinput';
 			var property = {};
 			var template = _.template(template_input_stock_main, property);
+			$('.mainContent').html(template);			
+			am.stock.input.init();				
+		});
+
+		$('#sale-item').on('click', function(e){
+			am.core.refreshPageState();
+			am.common.currentPage = 'salesbill';
+			var property = {};
+			var template = _.template(template_billing_main, property);
 			$('.mainContent').html(template);
-			am.stock.input.init();	
+			am.billing.init();	
+		});
+
+		$('#view-invoice-list').on('click', function(e){
+			am.common.currentPage = 'invoiceListNew';
+			var property = {};
+			var template = _.template(template_invoice_list_main_page, property);
+			$('.mainContent').html(template);
+			am.invoicelist.init();
 		});
 	},
+
+	refreshPageState: function(){
+		am.stock.input.dismiss(); //just to clear the autosuggestion list (to prevent DOM ovrloading)
+	},
+	
 	getCallbackObject : function() {
 		callback = $({});
 
@@ -97,5 +119,18 @@ am.core = {
 			type : reqType
 		};
 		return request;
+	}
+}
+var external = {
+	insertData: function(colData){
+		var obj = {};
+		var coldata = colData;
+			obj.aQuery= 'INSERT into dev.practice (name) VALUES ("'+coldata+'")';
+			var callBackObj = am.core.getCallbackObject();
+			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+			callBackObj.bind('api_response', function(event, response){
+				debugger;
+			});
+			am.core.call(request, callBackObj);
 	}
 }

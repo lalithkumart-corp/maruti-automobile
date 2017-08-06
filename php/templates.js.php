@@ -23,3 +23,8 @@ var template_invoice_list_page = <?php echo jsonStringify('../templates/invoicel
 var template_invoice_list_table = <?php echo jsonStringify('../templates/invoice_list_table.html'); ?> ; 
 
 var template_input_stock_main = <?php echo jsonStringify('../templates/input_invoice_main.html'); ?>;
+
+var template_invoice_list_main_page = <?php echo jsonStringify('../templates/invoice-list-main-page.html'); ?>;
+
+var template_invoice_list_data_table = <?php echo jsonStringify('../templates/invoice_list_data_table.html'); ?>;
+

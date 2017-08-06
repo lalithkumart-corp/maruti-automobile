@@ -1,0 +1,65 @@
+.invoice_list_data_table_container{
+    width: 1000px;
+    margin: 0 auto;
+}
+.invoice-list-data-table .open{
+    border: 5px solid green;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+.invoice-list-data-table .closed{
+    border: 5px solid red;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 1px;
+}
+#invoice_list_main_page .filterInput {
+    width: 100% !important;
+}
+.editing-invoice-popup{
+    width: 1100px;
+    top: 0px;
+    left: calc(50% - 550px);
+    max-height: 650px;
+    overflow-x: hidden;
+    border: 10px solid lightgray;
+    border-radius: 5px;
+}
+.editing-invoice-popup .input-invoice-main .left-container{
+    border-right: none;
+    width: 100%;
+}
+.editing-invoice-popup .input-invoice-main .effect-on-edit-invoice-popup{
+    display: block;
+}
+.editing-invoice-popup .input-invoice-main .effect-on-edit-invoice-popup:after{
+    clear: both;
+}
+.editing-invoice-popup .input-invoice-main .effect-on-edit-invoice-popup:after,
+.editing-invoice-popup .input-invoice-main .effect-on-edit-invoice-popup:before{
+    display: table;
+    content: " ";
+}
+.editing-invoice-popup .input-invoice-main .right-invoice-container{
+    width: 75%;
+}
+.editing-invoice-popup .input-invoice-main .amount-details{
+    padding-top: 10px;
+}
+.editing-invoice-popup .input-invoice-main .add-payment-detail-icon{
+    display: inline-block;
+}
+.editing-invoice-popup .input-invoice-main .add-payment-detail-icon img{
+    width: 15px;
+    cursor: pointer;
+}
+.editing-invoice-popup .input-invoice-main .submit-invoice-stock-btn{
+    display: none;
+}
+.editing-invoice-popup #commonModalBodyDiv{
+    height: auto;
+}
+.editing-invoice-popup #btn1Update{
+    display: none;
+}

@@ -101,3 +101,20 @@ input[type='button']{
     padding: 2px 10px;
     border-radius: 4px;
 }
+
+.no-border{
+    border: none;
+}
+.only-b-border{
+    border-top: none;
+    border-right: none;
+    border-left: none;
+}
+/*aw: auto-width*/
+input.aw{
+    width: 100%;
+}
+/*ah: auto-height*/
+input.ah{
+    height: 100%;
+}

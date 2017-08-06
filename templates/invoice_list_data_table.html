@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class='col-sm-10'>
+        <table class="invoice-list-data-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th></th>
+                    <th>Invoice</th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Due</th>
+                    <th>Other</th>
+                </tr>
+                <tr id="filterInvoice">
+                    <th></th>
+                    <th></th>
+                    <th>Invoice</th>
+                    <th></th>
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each(tableData, function(aRow, index){ %>
+                    <tr class="">
+                        <td><%= index+1 %></td>
+                        <td>
+                            <% if(parseInt(aRow.due_amount) > 0){ %>
+                                <div class="open" data-view-mode="pendingInvoice"><span class="hiddenopen">open</span></div>
+                            <% }else{ %>
+                                <div class="closed" data-view-mode="closedInvoice"><span class="hiddenclosed">closed</span></div>
+                            <% } %>
+                        </td>
+                        <td class="invoiceNo" data-unique-no = <%= aRow.unique_identifier%> ><%= aRow.invoice_no %></td>
+                        <td><%= aRow.date %></td>
+                        <td><%= aRow.dealer_name %></td>
+                        <td><%= aRow.amount %></td>
+                        <td><%= aRow.paid_amount%></td>
+                        <td><%= aRow.due_amount%></td>
+                        <td>                            
+                            
+                        </td>
+                    </tr>
+                <% })%>            
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-1"></div>
+</div>

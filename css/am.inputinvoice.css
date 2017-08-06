@@ -31,20 +31,32 @@
 .input-invoice-main .table-container tbody .item-id-cell.new{
     background-color: rgba(14, 244, 129, 0.26);
 }
-
-
-
-.no-border{
-    border: none;
+.input-invoice-main .effect-on-edit-invoice-popup{
+    display: none;
 }
-.only-b-border{
-    border-top: none;
-    border-right: none;
-    border-left: none;
+.input-invoice-main .right-invoice-container{
+    width: 25%;
 }
-input.aw{
-    width: 100%;
+.input-invoice-main .amount-details{    
+    text-align: left;
+    padding: 150px 0 0 0;
 }
-input.ah{
-    height: 100%;
+.input-invoice-main .amt-label,
+.input-invoice-main .actual-amt,
+.input-invoice-main .due-amt,
+.input-invoice-main .paid-amt{
+    /*float: left;*/
+    width: 100px;
+}
+.input-invoice-main .form-control{
+    width: 100px;
+    display: inline-block;
+    margin-left: 10px;
+    height: 26px;
+    margin-top: 0px;
+    vertical-align: middle;
+    /*float: left;*/
+}
+.input-invoice-main .add-payment-detail-icon{
+    display: none;
 }
