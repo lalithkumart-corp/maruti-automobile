@@ -21,7 +21,7 @@
     width: 1100px;
     top: 0px;
     left: calc(50% - 550px);
-    max-height: 650px;
+    max-height: 550px;
     overflow-x: hidden;
     border: 10px solid lightgray;
     border-radius: 5px;
@@ -42,7 +42,17 @@
     content: " ";
 }
 .editing-invoice-popup .input-invoice-main .right-invoice-container{
-    width: 75%;
+    width: 100%;
+    background-color: aliceblue;
+    padding-top: 25px;
+    padding-left: 25px;
+}
+.editing-invoice-popup .notes-textarea{
+    margin-left: -15px;
+}
+.editing-invoice-popup .input-invoice-main .actual-amt,
+.editing-invoice-popup .input-invoice-main .paidAmt{
+    border: none;
 }
 .editing-invoice-popup .input-invoice-main .amount-details{
     padding-top: 10px;
@@ -62,4 +72,30 @@
 }
 .editing-invoice-popup #btn1Update{
     display: none;
+}
+
+.editing-invoice-popup .edit-msg-container-invoice,
+.editing-invoice-popup .edit-msg-container-stock{
+    display: block;
+    text-align: center;
+    font-size: 20px;
+    position: absolute;
+    z-index: 1000;
+    left: 35%;
+}
+.editing-invoice-popup .msg-string.success{
+    color: white;
+    font-weight: bold;
+    background-color: #2fc32f;
+    padding: 0 45px;
+}
+.editing-invoice-popup .msg-string.error{
+    color: white;
+    font-weight: bold;
+    background-color: #ea1f1f;
+    padding: 0 45px;
+}
+.editing-invoice-popup .commonModalFooterDiv input{
+    margin: 0 10px;
+    padding: 5px 25px;
 }

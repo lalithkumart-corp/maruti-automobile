@@ -56,9 +56,12 @@ am.stock.input = (function(){
 
         textArea: '.input-invoice-main .right-invoice-container .notes-textarea',
         actualAmt: '.input-invoice-main .right-invoice-container .actual-amt',
-        paidAmt: '.input-invoice-main .right-invoice-container .paid-amt',
+        paidAmt: '.input-invoice-main .right-invoice-container .paidAmt',
         dueAmt: '.input-invoice-main .right-invoice-container .due-amt',
-        paymentRow: '.input-invoice-main .right-invoice-container .payment-row',
+        paymentContainer: '.input-invoice-main .right-invoice-container .payment-container',
+        paymentRow: '.input-invoice-main .right-invoice-container .paymentRow',
+        addPaymentIcon: '.input-invoice-main .right-invoice-container .add-payment-detail-icon',
+        deletePaymentIcon: '.input-invoice-main .right-invoice-container .deletePaymentIcon',
         paymentMode: '.input-invoice-main .right-invoice-container .paymentMode',
         paymentDate: '.input-invoice-main .right-invoice-container .payment-date',
         submitBtn: '.submit-invoice-stock-btn'
@@ -78,6 +81,13 @@ am.stock.input = (function(){
         bindAddRowEvent();
         bindSubmitEvent();
         bindRightPaneEvents();
+        $(sel.addPaymentIcon).off().on('click', function(e){
+            appendPaymentRow();
+        });
+        $(sel.deletePaymentIcon).off().on('click', function(){
+			var identifier = $(this).data('identifier');
+			deletePaymentRow(identifier);
+		});
     }
 
     function editInvoicePopupController(){
@@ -200,15 +210,26 @@ am.stock.input = (function(){
                 dataObj.ac.partNos.push(anItem.item_part_no);
             if(dataObj.itemIdColl.indexOf(anItem.item_id) == -1)
                 dataObj.itemIdColl.push(anItem.item_id);
-        });        
+        });
+       dataObj.ac.brands = cleanArray(dataObj.ac.brands);
+       dataObj.ac.itemNames = cleanArray(dataObj.ac.itemNames);
+       dataObj.ac.partNos = cleanArray(dataObj.ac.partNos);
+       dataObj.ac.itemIdColl = cleanArray(dataObj.ac.itemIdColl);
     }
+
+    function cleanArray(arrObj){
+         arrObj = _.uniq(arrObj);
+         arrObj = _.without(arrObj, ''); 
+         return arrObj;       
+    }
+
     function bindAutoCompleterList(){
         bindAutoCompleteFor('brand');
         bindAutoCompleteFor('item');
         bindAutoCompleteFor('partno');
         afterAutoCompleteBinded();
     }
-    function bindAutoCompleteFor(elmName){        
+    function bindAutoCompleteFor(elmName){                
         var collections, selector;
         switch(elmName){
             case 'brand':
@@ -399,13 +420,13 @@ am.stock.input = (function(){
             obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
             obj.aQuery += query;
             obj.aQuery += 'SET SQL_SAFE_UPDATES = 1;';
-            var callBackObj = am.core.getCallbackObject();
-            debugger;
+            var callBackObj = am.core.getCallbackObject();            
 			var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
 			callBackObj.bind('api_response', function(event, response){                
                 if(!_.isUndefined(callbackObject))
                     callbackObject(response);
-                               
+                else
+                    afterStockUpdate(response);                            
             });
             am.core.call(request, callBackObj);
         });
@@ -415,21 +436,24 @@ am.stock.input = (function(){
     function afterStockUpdate(response){
         response = JSON.parse(response);
         if(response[0].status == true){
-            am.popup.init({
-                title: 'STOCK - updated!',
-                desc: 'Stock has been updated Successfully !',
-                dismissBtnText: 'Ok'
-            });
+            // am.popup.init({
+            //     title: 'STOCK - updated!',
+            //     desc: 'Stock has been updated Successfully !',
+            //     dismissBtnText: 'Ok'
+            // });
+            helper.showSuccessAlert('stock', 'Items added to Stock Successfully!');
             setTimeout(function(){ //refresh will fetch the stcoklist from DB. But the DB has just now got updated, and so fetching with delay . (To prevent fetching the old list from DB)Making delay, to let the DB to be updated
                 if(am.common.currentPage == 'stockinput')
                     refresh();
             }, 500);
         }else{
-            am.popup.init({
-                title: 'Error in Updating STOCK',
-                desc: 'Could not able to update the stock details ',
-                dismissBtnText: 'Ok'
-            });
+            // am.popup.init({
+            //     title: 'Error in Updating STOCK',
+            //     desc: 'Could not able to update the stock details ',
+            //     dismissBtnText: 'Ok'
+            // });
+            debugger;
+            helper.showDangerAlert('stock', 'Error in Updating STOCK.');
         }         
     }
     function refresh(){
@@ -540,9 +564,27 @@ am.stock.input = (function(){
         });
         return price;
     }
-
-
     /*END: getters */
+
+
+    function appendPaymentRow(){
+		var identifier = $.now();
+		var elem = _.template(template_addinvoice_payment_adder, {identifier : identifier});
+		$(sel.paymentContainer).append(elem);
+		$('#date'+identifier).datepicker().datepicker("setDate", new Date());
+		$(sel.deletePaymentIcon).off().on('click', function(e){
+			var identifier = $(this).data('identifier');
+			deletePaymentRow(identifier);
+		});
+		$('.'+identifier+' input[type="number"]').on('keyup', function(e){
+			calculateAmount();
+		});
+	}
+
+    function deletePaymentRow(identifier){
+		$('.'+identifier).remove();
+		calculateAmount();
+    }
 
 
     /*START: Databae updates */    
@@ -553,20 +595,20 @@ am.stock.input = (function(){
         var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
         callBackObj.bind('api_response', function(event, response){     
             if(!_.isUndefined(callbackObject))
-                callbackObject(response);           
+                callbackObject(response);
+            else
+                afterInvoiceUpdate(response);         
             console.log(response);
         });
         am.core.call(request, callBackObj);                        
     }
     function afterInvoiceUpdate(response){
-        // response = JSON.parse(response);
-        // if(response[0].status == true){
-        //     am.popup.init({
-        //         title: 'Success',
-        //         desc: 'Invoice has been added Successfully !',
-        //         dismissBtnText: 'Ok'
-        //     });
-        // }
+        response = JSON.parse(response);
+        if(response[0].status == true){
+            helper.showSuccessAlert('invoice', 'Invoice has been added Successfully !');
+        }else{
+            helper.showDangerAlert('invoice', 'Error in Updating invoice details');
+        }
     }
     /*END: Databae updates */
 
@@ -606,6 +648,39 @@ am.stock.input = (function(){
             if(_.isUndefined(prop) || _.isEmpty(prop) || _.isNull(prop))
                 isValid = false;
             return isValid;
+        },
+
+        showSuccessAlert: function(identifier, message){
+            var clsName = 'alert-success';
+            var container;
+            switch(identifier){
+                case 'stock':
+                    container = '.stock-alert-container';
+                    break;
+                case 'invoice':
+                    container = '.invoice-alert-container';
+                    break;
+            }
+            $(container + ' .alert').removeClass('alert-danger');
+            $(container).find('.msg-text').html(message);
+            $(container + ' .alert').addClass(clsName);
+            $(container).fadeIn().delay(3000).fadeOut(1000);
+        },
+
+        showDangerAlert: function(identifier, message){
+            var clsName = 'alert-danger';
+            switch(identifier){
+                case 'stock':
+                    container = '.stock-alert-container';
+                    break;
+                case 'invoice':
+                    container = '.invoice-alert-container';
+                    break;
+            }
+            $(container + ' .alert').removeClass('alert-success');
+            $(container).find('.msg-text').html(message);
+            $(container + ' .alert').addClass(clsName);
+            $(container).fadeIn().delay(3000).fadeOut(1000);
         }
     };
 
@@ -616,7 +691,10 @@ am.stock.input = (function(){
         editInvoicePopupController: editInvoicePopupController,
         getStockDetails: getStockDetails,
         updateStock: updateStock,
-        getInvoiceDetails: getInvoiceDetails
+        getInvoiceDetails: getInvoiceDetails,
+        appendPaymentRow: appendPaymentRow,
+        afterInvoiceUpdate: afterInvoiceUpdate,
+        helper: helper
     }
 })();
 

@@ -44,7 +44,7 @@
 .input-invoice-main .amt-label,
 .input-invoice-main .actual-amt,
 .input-invoice-main .due-amt,
-.input-invoice-main .paid-amt{
+.input-invoice-main .paidAmt{
     /*float: left;*/
     width: 100px;
 }
@@ -59,4 +59,10 @@
 }
 .input-invoice-main .add-payment-detail-icon{
     display: none;
+}
+.input-invoice-main .dummy-label{
+    width: 100px;
+}
+.input-invoice-main .table-container table{
+    width: 100%;
 }

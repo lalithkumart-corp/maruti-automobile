@@ -1,0 +1,44 @@
+.alert-container {
+	position: relative;
+	z-index: 1050;
+}
+
+.alert {
+	border: 0;
+	border-radius: 0;
+	color: #fff;
+	font-weight: bold;
+	padding: 5px 15px;
+	text-align: center;
+	width: 100%;
+}
+.alert-container .alert {
+	position: absolute;
+	top: 0;
+}
+
+.alert-container .alert a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.alert-container .alert-dismissable {
+	padding-right: 35px;
+}
+
+.alert-container .close {
+	color: inherit;
+	font-size: 1em;
+	opacity: 1;
+	top: 2px;
+}
+
+.alert-container .alert-icon {
+	padding-right: 10px;
+}
+.alert-success{
+	background-color: #82c766;
+}
+.alert-danger{
+	background-color: #a94442;
+}

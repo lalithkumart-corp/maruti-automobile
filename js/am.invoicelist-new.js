@@ -101,7 +101,7 @@ am.invoicelist = (function(){
                 onEditInvoicePopupShown(myInvoiceData);
             }
             function onHiddenCallback(){
-                
+                rerenderTable();
             }
             var options = {};
                 options.title= "Edit Invoice...";
@@ -132,8 +132,16 @@ am.invoicelist = (function(){
         return myInvoiceData;
     }
 
-    function onEditInvoicePopupShown(theInvoiceData){        
+    function onEditInvoicePopupShown(theInvoiceData){ 
+         $('.editing-invoice-popup .commonModalBodyDiv').prepend('<div class="edit-msg-container-stock"><p class="msg-string"></p></div>'); 
+         $('.editing-invoice-popup .commonModalBodyDiv').prepend('<div class="edit-msg-container-invoice"><p class="msg-string"></p></div>');
+         $('.editing-invoice-popup .commonModalBodyDiv').prepend('<div class="overlay-elm"></div>');    
         am.invoicelist.edit.init(theInvoiceData);
+    }
+
+    function rerenderTable(){
+        if(!_.isUndefined(dataObj.rerender) && dataObj.rerender == true)
+            fetchTableData();
     }
 
     function getValue(prop){
@@ -151,7 +159,8 @@ am.invoicelist = (function(){
     return {
         init: init,
         getValue: getValue,
-        getInvoiceData: getInvoiceData
+        getInvoiceData: getInvoiceData,
+        dataObj: dataObj
     }
 
 })();
@@ -175,13 +184,17 @@ am.invoicelist.edit = (function(){
 
     var sel = {
         //editinvoice selectors
+        editInvoicePopup: '.editing-invoice-popup',
         editInvoiceTableBody: '.editing-invoice-popup .input-invoice-main .table-container tbody',
         invoiceNo: '.editing-invoice-popup .invoice-no',
         dealerName: '.editing-invoice-popup .delaer-name',
         invoiceDate: '.editing-invoice-popup .invoice-date',  
         textArea: '.editing-invoice-popup .right-invoice-container .notes-textarea',
+        paymentRow: '.editing-invoice-popup .paymentRow',
         actualAmt: '.editing-invoice-popup .right-invoice-container .actual-amt',
         dueAmt: '.editing-invoice-popup .right-invoice-container .due-amt',
+        invoiceMsgContainer: '.edit-msg-container-invoice',
+        stockMsgContainer: '.edit-msg-container-stock'
     }
     function init(theInvoiceData){
         fillEntries(theInvoiceData);
@@ -205,19 +218,10 @@ am.invoicelist.edit = (function(){
     }
     function afterStockUpdate(response){
         response = JSON.parse(response);
-        if(response[0].status == true){
-            am.popup.init({
-                title: 'STOCK - updated!',
-                desc: 'Stock has been updated Successfully !',
-                dismissBtnText: 'Ok'
-            });
-        }else{
-            am.popup.init({
-                title: 'Error in Updating STOCK',
-                desc: 'Could not able to update the stock details ',
-                dismissBtnText: 'Ok'
-            });
-        }
+        if(response[0].status == true)
+            am.stock.input.helper.showSuccessAlert('stock', 'Stock has been updated Successfully !');
+        else
+            am.stock.input.helper.showDangerAlert('stock', 'Error! Could not able to update the stock details ');            
     }
     function fillEntries(theInvoiceData){
         fillValue('invoiceNo', theInvoiceData.invoice_no);
@@ -226,7 +230,8 @@ am.invoicelist.edit = (function(){
         fillValue('notes', theInvoiceData.invoice_note);
         fillValue('principalAmt', theInvoiceData.amount);
         fillValue('dueAmt', theInvoiceData.due_amount);
-        fillTable(theInvoiceData.invoice_details);        
+        fillTable(theInvoiceData.invoice_details);
+        fillPaymentDetails(theInvoiceData.payment_data);  
     }
 
     /* START: Edit Popup fillers */
@@ -273,6 +278,22 @@ am.invoicelist.edit = (function(){
         $(sel.editInvoiceTableBody).find('tr:last').find('.tax-field').addClass('add-row');
         
     }
+
+    function fillPaymentDetails(paymentDetails){        
+        paymentDetails = JSON.parse(paymentDetails);
+        var i = 1;
+        while(i < paymentDetails.length){
+            am.stock.input.appendPaymentRow();
+            i++;
+        }
+        _.each(paymentDetails, function(aPaymentDetail, index){
+            var elm = $(sel.paymentRow)[index];
+            $(elm).find('.paidAmt').val(aPaymentDetail.pv);
+            $(elm).find('.paymentMode').val(aPaymentDetail.pm);
+            $(elm).find('.hasDatepicker').val(aPaymentDetail.pd);
+        });
+    }
+
     /* END: Edit Popup fillers */
 
     function getUpdatedStockDetails(unique_no){
@@ -293,6 +314,8 @@ am.invoicelist.edit = (function(){
             var updatedItemDetail = getItemById(id);
             if(!_.isUndefined(updatedItemDetail))
                 anItemDetail = adjustCount(anItemDetail, updatedItemDetail);
+            else
+                anItemDetail = reverseCount(anItemDetail);
         });
         var final = _.union(existingItemDetail, temp.stockDetails)
         return final;      
@@ -321,7 +344,15 @@ am.invoicelist.edit = (function(){
         return obj1;
     }
 
+    function reverseCount(data){
+        data[map.itemCount] = -Math.abs(data[map.itemCount]);
+        return data;
+    }
+
     function updateInvoice(data, unique_no){
+        var updated = false;
+        var msg = 'Error in Update the invoice.';
+        var msgClassName = 'error';
         var obj = {};
         obj.multiQuery = 'true';
     	obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
@@ -329,8 +360,21 @@ am.invoicelist.edit = (function(){
         obj.aQuery += 'SET SQL_SAFE_UPDATES = 1;';
         var callBackObj = am.core.getCallbackObject();
         var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
-        callBackObj.bind('api_response', function(event, response){                
-            console.log(response);
+        callBackObj.bind('api_response', function(event, response){                            
+            var data = JSON.parse(response);
+            if(data[0].status == true)
+                am.stock.input.helper.showSuccessAlert('invoice', 'Invoice has been updated Successfully!');
+            else
+                am.stock.input.helper.showDangerAlert('invoice', 'Error! Could not able to update the invoice');                    
+            // if(data[0].status == true){
+            //     updated = true;
+            //     msg = 'Invoice updated successfully!';
+            //     msgClassName = 'success';
+            // }
+            // $(sel.invoiceMsgContainer +' .msg-string').addClass(msgClassName);
+            // $(sel.editInvoicePopup).scrollTop(0);
+            // $(sel.invoiceMsgContainer +' .msg-string').html(msg).fadeIn(500).delay(4000).fadeOut(1000);
+            am.invoicelist.dataObj.rerender = true;
         });
         am.core.call(request, callBackObj);         
     }

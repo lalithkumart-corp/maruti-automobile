@@ -1,5 +1,23 @@
 <div class='input-invoice-main'>
-    
+    <div class="stock-alert-container alert-container" style="display: none;">
+        <div class="alert alert-dismissable" role="alert" style="width:60%; position:fixed; top: 100px; left: 20%; right: 20%;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" class="kn-icon-close"></span>
+            </button>
+            <span class='msg-text'></span>
+        </div>				
+    </div>
+
+    <div class="invoice-alert-container alert-container" style="display: none;">
+        <div class="alert alert-dismissable" role="alert" style="width:60%; position:fixed; top: 60px; left: 20%; right: 20%;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" class="kn-icon-close"></span>
+            </button>
+            <span class='msg-text'></span>
+        </div>				
+    </div>
+
+
     <div class="col-sm-9 col-xs-9 left-container">
         <div class='col-sm-12 col-xs-12'>
             <div class='a-form-group col-sm-3 col-xs-3'>
@@ -77,10 +95,10 @@
                 <input type='number' class='actual-amt'/>
             </div>
             <div class='clearfix'></div>     
-            <div class='col-sm-12 col-xs-12'>                
-                <div class='payment-row initial-payment-row'>
+            <div class='col-sm-12 col-xs-12 payment-container'>                
+                <div class='paymentRow initial-payment-row'>
                     <label class='amt-label'>Paid: </label>
-                    <input type='number' class='paid-amt'/>
+                    <input type='number' class='paidAmt'/>
                     <select class="form-control paymentMode" data-identifier="initialPaymentRow">
                         <option>Cash</option>
                         <option>Card</option>
