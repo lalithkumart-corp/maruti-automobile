@@ -20,9 +20,12 @@ am.stock.input = (function(){
         itemBrand: 'ib',
         itemName: 'in',
         itemPartNo: 'ip',
+        itemMrp: 'im',
         itemPrice: 'ir',
+        itemSellingPrice: 'is',
         itemCount: 'ic',
-        itemGSTTax: 'it',
+        itemCGSTTax: 'ict',
+        itemSGSTTax: 'ist',
         itemValue: 'iv'
     };
 
@@ -45,8 +48,11 @@ am.stock.input = (function(){
         itemNameField: '.item-name-field',
         brandNameField: '.brand-name-field',
         partNoField: '.part-no-field',
+        mrpField: '.mrp-field',
         priceField: '.price-field',
-        taxField: '.tax-field',
+        sellingPriceField: '.selling-price-field',
+        cgstTaxField: '.cgst-tax-field',
+        sgstTaxField: '.sgst-tax-field',
         countField: '.count-field',
         valueField: '.value-field',
         itemIdCell: '.item-id-cell',
@@ -54,16 +60,16 @@ am.stock.input = (function(){
         addRow: '.input-invoice-main .' + cls.addRow,
         needFocus: '.input-invoice-main .' + cls.needFocus,
 
-        textArea: '.input-invoice-main .right-invoice-container .notes-textarea',
-        actualAmt: '.input-invoice-main .right-invoice-container .actual-amt',
-        paidAmt: '.input-invoice-main .right-invoice-container .paidAmt',
-        dueAmt: '.input-invoice-main .right-invoice-container .due-amt',
-        paymentContainer: '.input-invoice-main .right-invoice-container .payment-container',
-        paymentRow: '.input-invoice-main .right-invoice-container .paymentRow',
-        addPaymentIcon: '.input-invoice-main .right-invoice-container .add-payment-detail-icon',
-        deletePaymentIcon: '.input-invoice-main .right-invoice-container .deletePaymentIcon',
-        paymentMode: '.input-invoice-main .right-invoice-container .paymentMode',
-        paymentDate: '.input-invoice-main .right-invoice-container .payment-date',
+        textArea: '.input-invoice-main .bottom-container .notes-textarea',
+        actualAmt: '.input-invoice-main .bottom-container .actual-amt',
+        paidAmt: '.input-invoice-main .bottom-container .paidAmt',
+        dueAmt: '.input-invoice-main .bottom-container .due-amt',
+        paymentContainer: '.input-invoice-main .bottom-container .payment-container',
+        paymentRow: '.input-invoice-main .bottom-container .paymentRow',
+        addPaymentIcon: '.input-invoice-main .bottom-container .add-payment-detail-icon',
+        deletePaymentIcon: '.input-invoice-main .bottom-container .deletePaymentIcon',
+        paymentMode: '.input-invoice-main .bottom-container .paymentMode',
+        paymentDate: '.input-invoice-main .bottom-container .payment-date',
         submitBtn: '.submit-invoice-stock-btn'
     };
 
@@ -110,6 +116,15 @@ am.stock.input = (function(){
         });
         $(sel.countField).off('blur').on('blur', function(e){
             calcValueForItem(this);
+        });
+        $(sel.mrpField).off('blur').on('blur', function(e){
+            var itsParent = $(this).closest('tr');
+            var sellingPriceField = $(itsParent).find(sel.sellingPriceField);
+            if($(sellingPriceField).val() == '')
+                $(sellingPriceField).val($(this).val());
+        });
+        $(sel.valueField).off('blur').on('blur', function(e){
+            calculateTotalValue();
         });
     }
 
@@ -158,6 +173,14 @@ am.stock.input = (function(){
 		$(sel.dueAmt).text(dueAmount);
     }
 
+    function calculateTotalValue(){
+        var totalValue = 0;
+        _.each($(sel.tableBody + ' tr'), function(aRow, index){
+            totalValue += parseFloat($(aRow).find(sel.valueField).val() || 0);
+        });
+        $(sel.actualAmt).val(totalValue);
+    }
+
     function bindAddRowEvent(){
         $(sel.addRow).off('keypress').on('keypress', function(e){
             var key = 'which' in e ? e.which : e.keyCode;
@@ -181,8 +204,11 @@ am.stock.input = (function(){
     }
 
     function autoFillDetails(row, data){
+        $(row).find(sel.mrpField).val(data.unit_mrp);
         $(row).find(sel.priceField).val(data.unit_price);
-        $(row).find(sel.taxField).val(data.gst);
+        $(row).find(sel.sellingPriceField).val(data.unit_selling_price);
+        $(row).find(sel.cgstTaxField).val(data.cgst);
+        $(row).find(sel.sgstTaxField).val(data.sgst);
     }
 
     function fetchAutoCompleterLists(){
@@ -340,10 +366,13 @@ am.stock.input = (function(){
                 newRowHtmlstr += '<td><input type="text" class="need-ac-brand aw ah only-b-border brand-name-field need-focus"/></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-item aw ah only-b-border item-name-field"/></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-partno aw ah only-b-border part-no-field"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border count-field"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border add-row tax-field"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border value-field"/></td>';              
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border mrp-field"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border selling-price-field"/></td>';                
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border cgst-tax-field"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border sgst-tax-field"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border add-row value-field"/></td>';              
             newRowHtmlstr += '</tr>';
         return newRowHtmlstr;
     }
@@ -369,9 +398,12 @@ am.stock.input = (function(){
                 [map.itemBrand] : $(aRow).find('td:eq(2) input').val(),
                 [map.itemName] : $(aRow).find('td:eq(3) input').val(),
                 [map.itemPartNo] : $(aRow).find('td:eq(4) input').val(),
-                [map.itemPrice] : $(aRow).find('td:eq(5) input').val(),
-                [map.itemCount] : $(aRow).find('td:eq(6) input').val(),
-                [map.itemGSTTax] : $(aRow).find('td:eq(7) input').val(),
+                [map.itemCount] : $(aRow).find('td:eq(5) input').val(),
+                [map.itemMrp]: $(aRow).find('td:eq(6) input').val(),
+                [map.itemPrice] : $(aRow).find('td:eq(7) input').val(),                
+                [map.itemSellingPrice] : $(aRow).find('td:eq(8) input').val(),
+                [map.itemCGSTTax] : $(aRow).find('td:eq(9) input').val(),
+                [map.itemSGSTTax] : $(aRow).find('td:eq(10) input').val()
             };
             arr.push(anObj);
         });
@@ -529,10 +561,13 @@ am.stock.input = (function(){
                 [map.itemBrand] : $(aRow).find('td:eq(2) input').val(),
                 [map.itemName] : $(aRow).find('td:eq(3) input').val(),
                 [map.itemPartNo] : $(aRow).find('td:eq(4) input').val(),
-                [map.itemPrice] : $(aRow).find('td:eq(5) input').val(),
-                [map.itemCount] : $(aRow).find('td:eq(6) input').val(),
-                [map.itemGSTTax] : $(aRow).find('td:eq(7) input').val(),
-                [map.itemValue]: $(aRow).find('td:eq(8) input').val()
+                [map.itemCount] : $(aRow).find('td:eq(5) input').val(),
+                [map.itemMrp] : $(aRow).find('td:eq(6) input').val(),
+                [map.itemPrice] : $(aRow).find('td:eq(7) input').val(),
+                [map.itemSellingPrice] : $(aRow).find('td:eq(8) input').val(),
+                [map.itemCGSTTax] : $(aRow).find('td:eq(9) input').val(),
+                [map.itemSGSTTax] : $(aRow).find('td:eq(10) input').val(),
+                [map.itemValue]: $(aRow).find('td:eq(11) input').val()
             };
             arr.push(anObj);
         });
@@ -614,14 +649,17 @@ am.stock.input = (function(){
 
     var helper = {
         getInsertItemQuery: function(itemDetail){
-            var query = 'INSERT into '+ am.database.schema+ '.stock (item_id, item_brand, item_name, item_part_no, count, unit_price, gst) VALUES ("';
+            var query = 'INSERT into '+ am.database.schema+ '.stock (item_id, item_brand, item_name, item_part_no, count, unit_mrp, unit_price, unit_selling_price, cgst, sgst) VALUES ("';
             query += itemDetail[map.itemId] +  '", "';
             query += itemDetail[map.itemBrand] + '", "';
             query += itemDetail[map.itemName] + '", "';
             query += itemDetail[map.itemPartNo] + '", "';
             query += itemDetail[map.itemCount] + '", "';
+            query += itemDetail[map.itemMrp] + '", "';
             query += itemDetail[map.itemPrice] + '", "';
-            query += itemDetail[map.itemGSTTax];
+            query += itemDetail[map.itemSellingPrice] + '", "';
+            query += itemDetail[map.itemCGSTTax] + '", "';
+            query += itemDetail[map.itemSGSTTax];
             query += '");';
             return query;
         },

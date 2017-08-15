@@ -18,7 +18,7 @@
     </div>
 
 
-    <div class="col-sm-9 col-xs-9 left-container">
+    <div class="col-sm-12 col-xs-12 left-container">
         <div class='col-sm-12 col-xs-12'>
             <div class='a-form-group col-sm-3 col-xs-3'>
                 <label>Invoice No:</label>
@@ -41,14 +41,17 @@
                 <colgroup>
                     <col style="width: 20px">
                     <col style="width: 60px">
-                    <col style="width: 120px">
-                    <col style="width: 360px">
-                    <col style="width: 150px">
+                    <col style="width: 110px">
+                    <col style="width: 300px">
+                    <col style="width: 140px">
                     <!--<col style="width: 20px">-->
                     <col style="width: 70px">
+                    <col style="width: 90px">
+                    <col style="width: 90px">
+                    <col style="width: 90px">                    
                     <col style="width: 70px">
                     <col style="width: 70px">
-                    <col style="width: 70px">
+                    <col style="width: 90px">
                     <!--<col style="width: 150px">-->
                 </colgroup>
                 <thead>
@@ -59,9 +62,12 @@
                         <th>ITEM NAME</th>
                         <th>PART NO</th>
                         <!--<th></th>-->
+                        <th>QTY</th>
+                        <th>MRP</th>
                         <th>PRICE</th>
-                        <th>NOS</th>
-                        <th>GST(%)</th>
+                        <th>SELLING</th>              
+                        <th>CGST(%)</th>
+                        <th>SGST(%)</th>
                         <th>VALUE</th>
                         <!--<th>SALE&nbsp;PRICE</th>-->
                     </tr>
@@ -73,17 +79,56 @@
                         <td><input type="text" class="need-ac-brand aw ah only-b-border brand-name-field need-focus"/></td>
                         <td><input type="text" class="need-ac-item aw ah only-b-border item-name-field"/></td>
                         <td><input type="text" class="need-ac-partno aw ah only-b-border part-no-field"/></td>                        
-                        <td><input type="number" class="aw ah only-b-border price-field"/></td>
                         <td><input type="number" class="aw ah only-b-border count-field"/></td>
-                        <td><input type="number" class="aw ah only-b-border add-row tax-field"/></td>
-                        <td><input type="number" class="aw ah only-b-border value-field"/></td>                        
+                        <td><input type="number" class="aw ah only-b-border mrp-field"/></td>
+                        <td><input type="number" class="aw ah only-b-border price-field"/></td>
+                        <td><input type="number" class="aw ah only-b-border selling-price-field"/></td>                
+                        <td><input type="number" class="aw ah only-b-border cgst-tax-field"/></td>
+                        <td><input type="number" class="aw ah only-b-border sgst-tax-field"/></td>
+                        <td><input type="number" class="aw ah only-b-border add-row value-field"/></td>                        
                     </tr>                    
                 </tbody>
             </table>
         </div>
+        <div class='col-xs-12 col-sm-12 bottom-container'>
+            <div class='col-sm-6 col-xs-6'>
+                <textarea rows="4" cols="50" class='notes-textarea' placeholder="My Notes..."></textarea>
+            </div>
+            <div class='col-sm-6 col-xs-6 amount-details'>
+                <div class='col-sm-offset-3 col-xs-offset-3 col-sm-9 col-xs-9 value-container'>
+                    <label class='amt-label'>Total: </label>
+                    <input type='number' class='actual-amt'/>
+                </div>
+                <div class='clearfix'></div>     
+                <div class='col-sm-offset-3 col-xs-offset-3 col-sm-9 col-xs-9 payment-container'>                
+                    <div class='paymentRow initial-payment-row'>
+                        <label class='amt-label'>Paid: </label>
+                        <input type='number' class='paidAmt'/>
+                        <select class="form-control paymentMode" data-identifier="initialPaymentRow">
+                            <option>Cash</option>
+                            <option>Card</option>
+                            <option>Cheque</option>
+                        </select>
+                        <div class="add-payment-detail-icon" >
+                            <img src="/images/plus2.png">
+                        </div>
+                    </div>
+                </div>
+                <div class='clearfix'></div>
+
+                <div class='col-sm-offset-3 col-xs-offset-3 col-sm-9 col-xs-9 balance-container'>
+                    <label class='amt-label'>Balance:</label>
+                    <span class='due-amt'>0</span>
+                </div>
+            </div>
+            <div class='clearfix'></div>
+            <div class='' style='margin-top: 40px; text-align: center;'>
+                <input type='button' value='SUBMIT' class='submit-invoice-stock-btn' style='padding: 20px 50px; background-color: #c7c7ff; font-weight: bold;'/>
+            </div>
+        </div>
     </div>
 
-<div class='effect-on-edit-invoice-popup'></div>
+<!--<div class='effect-on-edit-invoice-popup'></div>
 
     <div class="col-sm-3 col-xs-3 right-invoice-container">
         <div class='col-sm-12 col-xs-12'>
@@ -121,5 +166,5 @@
             </div>
         </div>
     </div>
-    <div class='clearfix'></div>
+    <div class='clearfix'></div>-->
 </div>

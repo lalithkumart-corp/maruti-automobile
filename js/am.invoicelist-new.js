@@ -172,9 +172,12 @@ am.invoicelist.edit = (function(){
         itemBrand: 'ib',
         itemName: 'in',
         itemPartNo: 'ip',
+        itemMrp: 'im',
         itemPrice: 'ir',
+        itemSellingPrice: 'is',
         itemCount: 'ic',
-        itemGSTTax: 'it',
+        itemCGSTTax: 'ict',
+        itemSGSTTax: 'ist',
         itemValue: 'iv'
     };
 
@@ -189,10 +192,10 @@ am.invoicelist.edit = (function(){
         invoiceNo: '.editing-invoice-popup .invoice-no',
         dealerName: '.editing-invoice-popup .delaer-name',
         invoiceDate: '.editing-invoice-popup .invoice-date',  
-        textArea: '.editing-invoice-popup .right-invoice-container .notes-textarea',
+        textArea: '.editing-invoice-popup .bottom-container .notes-textarea',
         paymentRow: '.editing-invoice-popup .paymentRow',
-        actualAmt: '.editing-invoice-popup .right-invoice-container .actual-amt',
-        dueAmt: '.editing-invoice-popup .right-invoice-container .due-amt',
+        actualAmt: '.editing-invoice-popup .bottom-container .actual-amt',
+        dueAmt: '.editing-invoice-popup .bottom-container .due-amt',
         invoiceMsgContainer: '.edit-msg-container-invoice',
         stockMsgContainer: '.edit-msg-container-stock'
     }
@@ -261,21 +264,24 @@ am.invoicelist.edit = (function(){
     function fillTable(tableData){        
         var jsonData = JSON.parse(tableData);        
         $(sel.editInvoiceTableBody).html('');
-        _.each(jsonData, function(aRowData, index){
+        _.each(jsonData, function(aRowData, index){            
             var newRowHtmlstr = '<tr>';
                 newRowHtmlstr += '<td><input type="text" class="aw ah only-b-border s-no" value="'+ (index+1) +'" /></td>';
                 newRowHtmlstr += '<td class="item-id-cell"><span class="item-id">'+ aRowData[map.itemId]  +'</span></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-brand aw ah only-b-border brand-name-field need-focus" value="'+ aRowData[map.itemBrand] +'"/></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-item aw ah only-b-border item-name-field" value="'+ aRowData[map.itemName] +'"/></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-partno aw ah only-b-border part-no-field" value="'+ aRowData[map.itemPartNo] +'"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field" value="'+ aRowData[map.itemPrice] +'"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border count-field" value="'+ aRowData[map.itemCount] +'"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border tax-field" value="'+ aRowData[map.itemGSTTax] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border mrp-field" value="'+ aRowData[map.itemMrp] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field" value="'+ aRowData[map.itemPrice] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border selling-price-field" value="'+ aRowData[map.itemSellingPrice] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border cgst-tax-field" value="'+ aRowData[map.itemCGSTTax] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border sgst-tax-field" value="'+ aRowData[map.itemSGSTTax] +'"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border value-field" value="'+ aRowData[map.itemValue] +'"/></td>';              
             newRowHtmlstr += '</tr>';
             $(sel.editInvoiceTableBody).append(newRowHtmlstr);
         });
-        $(sel.editInvoiceTableBody).find('tr:last').find('.tax-field').addClass('add-row');
+        $(sel.editInvoiceTableBody).find('tr:last').find('.value-field').addClass('add-row');
         
     }
 

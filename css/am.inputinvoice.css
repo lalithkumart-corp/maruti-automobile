@@ -37,7 +37,7 @@
 .input-invoice-main .right-invoice-container{
     width: 25%;
 }
-.input-invoice-main .amount-details{    
+.input-invoice-main .right-invoice-container .amount-details{    
     text-align: left;
     padding: 150px 0 0 0;
 }
@@ -65,4 +65,12 @@
 }
 .input-invoice-main .table-container table{
     width: 100%;
+}
+.input-invoice-main .table-container table input{
+    padding-left: 5px;
+}
+
+.input-invoice-main .bottom-container{
+    padding-top: 25px;
+    padding-bottom: 25px;
 }

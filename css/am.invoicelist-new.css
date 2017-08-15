@@ -74,6 +74,22 @@
     display: none;
 }
 
+.editing-invoice-popup .input-invoice-main .bottom-container .payment-container,
+.editing-invoice-popup .input-invoice-main .bottom-container .value-container,
+.editing-invoice-popup .input-invoice-main .bottom-container .balance-container{
+    margin-left: 0;
+    padding: 0;
+    width: 100%;
+}
+.editing-invoice-popup .amount-details{
+    padding-left: 0;
+    padding-right: 0;
+}
+.editing-invoice-popup .commonModalFooterDiv{
+    padding-bottom: 15px;
+}
+
+/* START: Alert css */
 .editing-invoice-popup .edit-msg-container-invoice,
 .editing-invoice-popup .edit-msg-container-stock{
     display: block;
@@ -95,6 +111,7 @@
     background-color: #ea1f1f;
     padding: 0 45px;
 }
+/*End: Alert css */
 .editing-invoice-popup .commonModalFooterDiv input{
     margin: 0 10px;
     padding: 5px 25px;
