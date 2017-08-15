@@ -52,6 +52,14 @@ am.core = {
 			$('.mainContent').html(template);
 			am.invoicelist.init();
 		});
+
+		$('#view-stock-table').off().on('click', function(e){
+			am.common.currentPage = 'stock-table-display';
+			var property = {};
+			var template = _.template(template_stock_display_main_page, property);
+			$('.mainContent').html(template);
+			am.stock.view.init();
+		});
 	},
 
 	refreshPageState: function(){

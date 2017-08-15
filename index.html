@@ -60,6 +60,9 @@
 	<script type="text/javascript" src="/js/am.alert.js"></script>
 	<link rel="stylesheet" type="text/css" href="/css/am.alert.css"/>
 
+	<script type='text/javascript' src='/js/am.stock-display.js'></script>
+	<link rel='stylesheet' type='text/css' href='/css/am.stock-display.css'/>
+
 </head>
 <body>
 	<nav class="navbar navbar-inverse mainMenuBarContainer">
@@ -72,12 +75,17 @@
 	            <ul class="dropdown-menu">
 	              <li id="addInvoice">Add Invoice </li>
 	              <li id="viewAllInvoice"> Invoice List </li>
-	              <li id="itemManager"> Item Manager </li>
+	              <li id="itemManager"> Item Manager </li>																
+	            </ul>							
+	          </li>
+						<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">Stock <span class="caret"></span></a>
+							<ul class="dropdown-menu">
 								<li id="stock-input"> Stock Input </li>
 								<li id="view-invoice-list"> Invoice List (new) </li>
+								<li id='view-stock-table'>Stock Display</li>
 								<li id="sale-item"> Sale Point </li>
-	            </ul>
-	          </li>	          
+							</ul>
+						</li>
 	    </ul>
 	  </div>
 	</nav>

@@ -1,0 +1,10 @@
+.stock-display-main-container{
+    width: 1000px;
+    margin: 0 auto;
+}
+.stock-display-main-container .filter-stock-table .filterInput{
+    width: 100%;
+}
+.stock-display-main-container .stock-table-container tbody tr.odd{
+    background-color: rgba(128, 128, 128, 0.09);
+}

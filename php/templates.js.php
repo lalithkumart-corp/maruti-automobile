@@ -28,3 +28,6 @@ var template_invoice_list_main_page = <?php echo jsonStringify('../templates/inv
 
 var template_invoice_list_data_table = <?php echo jsonStringify('../templates/invoice_list_data_table.html'); ?>;
 
+var template_stock_display_main_page = <?php echo jsonStringify('../templates/stock_display_main_page.html'); ?>;
+
+var template_stock_display_table_container = <?php echo jsonStringify('../templates/stock-display-table-container.html'); ?>;

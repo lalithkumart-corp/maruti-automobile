@@ -1,0 +1,49 @@
+<div class='stock-table-container'>
+     <table>
+        <colgroup>
+            <col style="width: 20px">
+            <col style="width: 20px">
+            <col style="width: 150px">
+            <col style="width: 150px">
+            <col style="width: 100px">
+            <col style="width: 70px">
+            <col style="width: 70px">
+            <col style="width: 70px">
+        </colgroup>
+        <thead>
+             <tr>
+                <th>S.N</th>
+                <th>ItemId</th>
+                <th>BRAND</th>
+                <th>ITEM NAME</th>
+                <th>PART NO</th>                
+                <th>NOS</th>
+                <th>GST(%)</th>
+                <th>U_PRICE</th>
+            </tr>
+            <tr class='filter-stock-table'>
+                <th></th>
+                <th>ItemId</th>
+                <th>BRAND</th>
+                <th>ITEM NAME</th>
+                <th>PART NO</th>                
+                <th></th>
+                <th>GST</th>
+                <th>UNIT PRICE</th>
+            </tr>
+        </thead>
+        <tbody>            
+            <% _.each(stockData, function(aDetail, index){ %>
+                <tr>
+                    <td> <%= index+1 %> </td>
+                    <td> <%= aDetail.item_id %> </td>
+                    <td> <%= aDetail.item_brand %> </td>
+                    <td> <%= aDetail.item_name %> </td>
+                    <td> <%= aDetail.item_part_no %> </td>
+                    <td> <%= aDetail.count %> </td>
+                    <td> <%= aDetail.gst %> </td>
+                    <td> <%= aDetail.unit_price %> </td>
+                </tr>
+            <% }); %>
+        </tbody>
+</div>
