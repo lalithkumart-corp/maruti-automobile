@@ -1,0 +1,31 @@
+.mini-calc-main-page{
+    width: 1000px;
+    margin: 0 auto;
+}
+.mini-calc-main-page .nav-tabs>li.active>a,
+.mini-calc-main-page .nav-tabs>li.active>a:focus,
+.mini-calc-main-page .nav-tabs>li.active>a:hover{
+    border: 1px solid #b9b9e1;
+    border-bottom-color: transparent;
+}
+.mini-calc-main-page .nav-tabs{
+    /*border-bottom: 1px solid #b9b9e1;*/
+}
+.mini-calc-main-page .nav-tabs > li{
+    padding: 0;
+}
+.mini-calc-main-page .tab-content{
+    border: 1px solid #b9b9e1;
+    border-top: transparent;
+}
+.mini-calc-main-page .a-form-control{
+    padding: 10px;
+}
+.mini-calc-main-page .calc-price-value,
+.mini-calc-main-page .calc-mrp-value{
+    padding-left: 10px;
+    font-size: 19px;
+    vertical-align: bottom;    
+    margin: 0;
+    line-height: 1.5;
+}

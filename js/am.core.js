@@ -60,6 +60,13 @@ am.core = {
 			$('.mainContent').html(template);
 			am.stock.view.init();
 		});
+
+		$('#mini-calc').off().on('click', function(e){
+			am.common.currentPage = 'mini-calculator';
+			var template = _.template(template_mini_calc_main_page, {});
+			$('.mainContent').html(template);
+			am.minicalc.init();
+		});
 	},
 
 	refreshPageState: function(){

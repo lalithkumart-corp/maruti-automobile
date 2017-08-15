@@ -31,3 +31,7 @@ var template_invoice_list_data_table = <?php echo jsonStringify('../templates/in
 var template_stock_display_main_page = <?php echo jsonStringify('../templates/stock_display_main_page.html'); ?>;
 
 var template_stock_display_table_container = <?php echo jsonStringify('../templates/stock-display-table-container.html'); ?>;
+
+var template_mini_calc_main_page = <?php echo jsonStringify('../templates/mini-calc-main-page.html'); ?>;
+
+var template_price_calculator = <?php echo jsonStringify('../templates/price-calculator.html'); ?>;
