@@ -1,0 +1,43 @@
+.billing-main-panel .billing-table-container{
+    width: 1170px;
+    margin: 0 auto;
+}
+.billing-main-panel .billing-table-container table{
+    table-layout: fixed;
+    width: 100%;
+}
+.billing-main-panel .billing-table-container thead tr{
+    height: 42px;
+    background-color: rgba(238, 126, 35, 0.75);
+}
+.billing-main-panel .billing-table-container tbody tr td{
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 30px;
+}
+.billing-main-panel .billing-table-container tbody tr input{
+    padding-left: 4px;
+}
+
+.billing-main-panel .table-header-body-container{
+    height: 400px;
+    overflow-x: hidden;
+    border: 1px solid #f29e5a;
+}
+.billing-main-panel .billing-table-container thead th{
+    text-align: center;
+}
+.billing-main-panel .billing-table-container tfoot{
+    background-color: rgba(238, 126, 35, 0.75);
+}
+.billing-main-panel .billing-table-container tfoot td{
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 40px;
+}
+.billing-main-panel .billing-table-container tfoot tr input{
+    border: none;
+    background-color: transparent;
+    color: white;
+    font-size: 18px;
+}

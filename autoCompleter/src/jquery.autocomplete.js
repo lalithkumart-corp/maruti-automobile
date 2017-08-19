@@ -85,7 +85,12 @@
                 preventBadQueries: true,
                 lookupFilter: function (suggestion, originalQuery, queryLowerCase) {
                     //return suggestion.value.toLowerCase().indexOf(queryLowerCase) !== -1; //commented by lalith for filtering values with exact match from starting of a word.
-                    return suggestion.value.toLowerCase().indexOf(queryLowerCase) == 0;
+                    /*START: Author: lalith. Desc: based on options, filter the query from starting place or anywhere in string*/
+                    if(!_.isUndefined(that.options.filterMode) && that.options.filterMode == 'anywhere')
+                        return suggestion.value.toLowerCase().indexOf(queryLowerCase) !== -1;
+                    else
+                        return suggestion.value.toLowerCase().indexOf(queryLowerCase) == 0;
+                    /*END: Author: lalith. Desc: based on options, filter the query from starting place or anywhere in string*/
                 },
                 paramName: 'query',
                 transformResult: function (response) {

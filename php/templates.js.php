@@ -35,3 +35,5 @@ var template_stock_display_table_container = <?php echo jsonStringify('../templa
 var template_mini_calc_main_page = <?php echo jsonStringify('../templates/mini-calc-main-page.html'); ?>;
 
 var template_price_calculator = <?php echo jsonStringify('../templates/price-calculator.html'); ?>;
+
+var template_billing_main = <?php echo jsonStringify('../templates/template-billing-main.html'); ?>;
