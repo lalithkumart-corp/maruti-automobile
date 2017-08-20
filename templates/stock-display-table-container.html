@@ -9,6 +9,8 @@
             <col style="width: 70px">
             <col style="width: 70px">
             <col style="width: 70px">
+            <col style="width: 70px">
+            <col style="width: 70px">
         </colgroup>
         <thead>
              <tr>
@@ -19,7 +21,9 @@
                 <th>PART NO</th>                
                 <th>NOS</th>
                 <th>GST(%)</th>
-                <th>U_PRICE</th>
+                <th>MRP</th>
+                <th>UNIT PRICE</th>
+                <th>SELLING PRICE</th>
             </tr>
             <tr class='filter-stock-table'>
                 <th></th>
@@ -29,7 +33,9 @@
                 <th>PART NO</th>                
                 <th></th>
                 <th>GST</th>
+                <th>MRP</th>
                 <th>UNIT PRICE</th>
+                <th>SELLING PRICE</th>
             </tr>
         </thead>
         <tbody>            
@@ -42,7 +48,9 @@
                     <td> <%= aDetail.item_part_no %> </td>
                     <td> <%= aDetail.count %> </td>
                     <td> <%= aDetail.gst %> </td>
+                    <td> <%= aDetail.unit_mrp %> </td>
                     <td> <%= aDetail.unit_price %> </td>
+                    <td> <%= aDetail.unit_selling_price %> </td>
                 </tr>
             <% }); %>
         </tbody>

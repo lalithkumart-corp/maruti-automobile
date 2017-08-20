@@ -1,7 +1,20 @@
-.billing-main-panel .billing-table-container{
-    width: 1170px;
+
+
+.billing-contentpane{
+    width: 1300px;
     margin: 0 auto;
 }
+.billing-contentpane .bill-header-part{
+    padding-bottom: 15px;
+    display: table;
+    width: 100%;
+}
+
+.billing-main-panel .billing-table-container{
+    /*width: 1300px;
+    margin: 0 auto;*/
+}
+
 .billing-main-panel .billing-table-container table{
     table-layout: fixed;
     width: 100%;
@@ -18,7 +31,20 @@
 .billing-main-panel .billing-table-container tbody tr input{
     padding-left: 4px;
 }
-
+.billing-main-panel .billing-table-container tbody tr input[disabled]{
+    background-color: transparent;
+}
+.billing-main-panel .billing-bottom input[disabled]{
+    background-color: transparent;
+    border: 1px solid #b0adad;
+}
+.billing-main-panel .billing-table-container tbody tr input:not([disabled]):hover{
+    border-color: orange;
+}
+.billing-main-panel .billing-table-container tbody input.cgst-tax-field,
+.billing-main-panel .billing-table-container tbody input.sgst-tax-field{
+    background-color: #ebebe4;
+}
 .billing-main-panel .table-header-body-container{
     height: 400px;
     overflow-x: hidden;
@@ -40,4 +66,26 @@
     background-color: transparent;
     color: white;
     font-size: 18px;
+}
+.billing-main-panel .has-error{
+    border: 1px solid red;
+    /*box-shadow: 1px 2px 20px;*/
+    color: red;
+}
+
+.billing-main-panel .billing-bottom{
+    width: 1300px;
+    margin: 0 auto;
+    display: table;
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+.billing-main-panel .billing-bottom .amount-details .amt-label{
+    width: 70px;
+    padding-top: 7px;
+}
+.billing-main-panel .billing-bottom .paymentMode{
+    display: inline-block;
+    width: 120px;
+    height: 27px;
 }

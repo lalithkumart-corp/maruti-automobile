@@ -9,6 +9,9 @@
     margin-top: 20px;
     padding: 0;
 }
+.input-invoice-main .table-container table{
+    table-layout: fixed;
+}
 .input-invoice-main .table-container input[disabled]{
     background-color: transparent;
 }
@@ -21,15 +24,22 @@
 }
 .input-invoice-main .table-container tbody td{
     /*padding-top: 10px;*/
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 5px;    
     height: 30px;
+}
+.input-invoice-main .table-container tbody td:not(:last-child){
+    padding-right: 5px;
 }
 .input-invoice-main .table-container tbody .item-id-cell{
     background-color: rgba(141, 142, 143, 0.26);
 }
 .input-invoice-main .table-container tbody .item-id-cell.new{
     background-color: rgba(14, 244, 129, 0.26);
+}
+.input-invoice-main .table-container tbody .count-field,
+.input-invoice-main .table-container tbody .price-field,
+.input-invoice-main .table-container tbody .value-field{
+    background-color: rgba(180, 179, 238, 0.38);
 }
 .input-invoice-main .effect-on-edit-invoice-popup{
     display: none;

@@ -1,5 +1,23 @@
-<div class='billing-main-panel'>
-    <div class='col-sm-12 billing-contentpane'>
+<div class='col-sm-12 billing-main-panel'>
+    <div class='billing-contentpane'>
+        <div class='bill-header-part'>
+            <div class='col-sm-4'>
+                <label>Bill No:</label>
+                <input type='text' class='bill-no'/>
+            </div>
+            <div class='col-sm-4'>
+                <label>Customer Name:</label>
+                <input type='text'/>
+            </div>
+            <div class='col-sm-4'>
+                <label>Date:</label>
+                <input type='text' class='billing-date'/>
+                <span class="add-on">
+                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                </span>
+            </div>
+        </div>
+        <div class='clearfix'></div>
         <div class='a-form-group billing-table-container'>
             <div class='table-header-body-container'>
                 <table>
@@ -8,15 +26,17 @@
                         <col style="width: 90px">
                         <col style="width: 400px">
                         <col style="width: 70px">
+                        <col style="width: 120px">
                         <col style="width: 70px">
+                        <col style="width: 120px">
                         <col style="width: 70px">
-                        <col style="width: 70px">
-                        <col style="width: 70px">
+                        <col style="width: 120px">
+                        <col style="width: 120px">
                     </colgroup>
                     <thead>
                         <tr>
                             <th>S.N</th>
-                            <th>ItemId</th>
+                            <th>Barcode</th>
                             <th>ITEM</th>
                             <th>NOS</th>
                             <th>PRICE</th>                        
@@ -29,7 +49,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" class="aw ah only-b-border s-no" value="1" /></td>
+                            <td><input type="text" class="aw ah only-b-border s-no" value="1" disabled/></td>
                             <td><input type="text" class="need-ac-itemid aw ah only-b-border item-id-field"/></span></td>
                             <td><input type="text" class="need-ac-item-desc need-focus aw ah only-b-border item-desc-field" data-identifier=''/></td>
                             <td><input type="number" class="aw ah only-b-border count-field"/></td>
@@ -64,10 +84,12 @@
                         <col style="width: 90px">
                         <col style="width: 400px">
                         <col style="width: 70px">
+                        <col style="width: 120px">
                         <col style="width: 70px">
+                        <col style="width: 120px">
                         <col style="width: 70px">
-                        <col style="width: 70px">
-                        <col style="width: 70px">
+                        <col style="width: 120px">
+                        <col style="width: 120px">
                     </colgroup>
                     <tfoot>
                         <tr>
@@ -87,15 +109,53 @@
             </div>
         </div>
     </div>
-    <div class='col-sm-12 billing-bottom'>
+    <div class='billing-bottom'>
         <!--<div class='col-sm-12 col-xs-12' style='padding-top: 150px; text-align: center; padding-bottom: 150px;'>
             <label class='col-sm-4 col-xs-4'><span>Amount: </span></label><span>22040 /-</span><div class='clearfix'></div>
             <label class='col-sm-4 col-xs-4'><span>GST: </span></label><span>3592 /-</span><div class='clearfix'></div>
             <label class='col-sm-4 col-xs-4'><span>TOTAL:</span></label><span>25632 /-</span><div class='clearfix'></div>
             
         </div>-->
+        <div class='col-sm-6 col-xs-6 amount-details'>
+                <div class='value-container'>
+                    <label class='amt-label'>Total: </label>
+                    <input type='number' class='total-amt' value='0.00' disabled/>
+                </div>
+                <div class='discount-container'>
+                    <label class='amt-label'>Discount: </label>
+                    <input type="text" class='discount-amt' value="0.00"/>
+                </div>
+                <div class='sub-total-container'>
+                    <label class='amt-label'>Sub total: </label>
+                    <input type='text' class='sub-total-amt' value="0.00" disabled/>
+                </div>
+                <div class='clearfix'></div>     
+                <div class='payment-container'>                
+                    <div class='paymentRow initial-payment-row'>
+                        <label class='amt-label'>Paid: </label>
+                        <input type='number' class='paidAmt' value="0.00"/>
+                        <select class="form-control paymentMode" data-identifier="initialPaymentRow">
+                            <option>Cash</option>
+                            <option>Card</option>
+                            <option>Cheque</option>
+                        </select>
+                        <!--<div class="add-payment-detail-icon" >
+                            <img src="/images/plus2.png">
+                        </div>-->
+                    </div>
+                </div>
+                <div class='clearfix'></div>
+
+                <div class='balance-container'>
+                    <label class='amt-label'>Balance:</label>
+                    <input type='number' class='due-amt' value='0.00' disabled />
+                </div>
+            </div>
+
         <div class='' style='margin-top: 40px; text-align: center;'>
-            <input type='button' value='SUBMIT' class='billing-panel-submit-btn' style='padding: 20px 50px; background-color: rgb(242, 158, 90); font-weight: bold;'/>
+            <input type='button' value='Print' class='billing-panel-print-btn' style='padding: 10px 50px; margin: 0 5px 0 5px; background-color: rgb(242, 158, 90); font-weight: bold;'/>
+            <input type='button' value='Save' class='billing-panel-submit-btn' style='padding: 10px 50px; margin: 0 5px 0 5px; background-color: rgb(242, 158, 90); font-weight: bold;'/>
+            <input type='button' value='Reset' class='billing-panel-reset-btn' style='padding: 10px 50px; margin: 0 5px 0 5px; background-color: rgb(242, 158, 90); font-weight: bold;'/>
         </div>
     </div>
 </div>

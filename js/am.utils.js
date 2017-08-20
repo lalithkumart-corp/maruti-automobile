@@ -19,10 +19,12 @@ am.utils = {
 					price: price,
 					cgstTaxValue: am.utils.calc.calculateTaxValue(price, options.cgst),
 					sgstTaxValue: am.utils.calc.calculateTaxValue(price, options.sgst)
-				}
+				}				
 			}else{
 				result = price;
 			}
+			if(!_.isUndefined(options.roundOff))
+				result = am.utils.calc.doRoundoff(result, options.roundOff);
 			return result;
 		},
 		mrpCalculator: function(options){
@@ -36,6 +38,13 @@ am.utils = {
 		},
 		calculateTaxValue: function(amount, tax){
 			return taxValue = (amount * tax)/100;
+		},
+		doRoundoff: function(data, roundCount){
+			_.each(data, function(aProp, index){
+				if(!isNaN(aProp))
+					data[index] = aProp.toFixed(2);
+			});
+			return data;
 		}
 	}
 }

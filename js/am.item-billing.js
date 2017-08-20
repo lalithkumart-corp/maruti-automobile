@@ -28,6 +28,9 @@ am.billing = (function(){
         addRow: '.billing-contentpane .' + cls.addRow,
         needFocus: '.billing-contentpane .' + cls.needFocus,
 
+        billNoField: '.billing-main-panel .bill-no',
+        billDateField: '.billing-main-panel .billing-date',
+
         tableBody: '.billing-contentpane .billing-table-container table tbody',
 
         itemIdField: '.billing-contentpane .item-id-field',
@@ -54,11 +57,23 @@ am.billing = (function(){
         totalCgstField: '.billing-contentpane .total-cgst-field',
         totalSgstField: '.billing-contentpane .total-sgst-field',
         totalValueField: '.billing-contentpane .total-value-field',
+
+        totalInputField: '.billing-main-panel .amount-details .total-amt',
+        discountInputfield: '.billing-main-panel .amount-details .discount-amt',
+        subTotalAmt: '.billing-main-panel .amount-details .sub-total-amt',
+        paidAmt: '.billing-main-panel .amount-details .paidAmt',
+        dueAmt: '.billing-main-panel .amount-details .due-amt',
+        submitBtn: '.billing-main-panel .amount-details .billing-panel-submit-btn'
     };
 
-    function init(){
+    function init(){                
         fetchAutoCompleterList();
         bindEvents();
+        initialSetup();        
+    }
+
+    function initialSetup(){
+        fetchSettings();
         moveTabFocus();
     }
 
@@ -66,6 +81,9 @@ am.billing = (function(){
     function bindEvents(){
         bindItemBlurEvent();
         bindAddRowEvent();
+        bindSubmitEvent();
+        bindAmoutCalcEvents();
+        $(sel.billDateField).datepicker().datepicker("setDate", new Date());
     }
 
     function bindItemBlurEvent(){
@@ -74,6 +92,8 @@ am.billing = (function(){
             var qtyVal = parseInt($(this).val());
             var identifier = $(parentRow).find(sel.itemDescFieldElm).data('identifier');
             var itemDetails = dataObj.raw_stock[identifier];
+            if(_.isUndefined(itemDetails))
+                return;
             newSellingValue = parseInt(itemDetails.unit_selling_price) * qtyVal;
             itemDetails.new_selling_price = newSellingValue;
             fillPriceDetails(itemDetails, parentRow);
@@ -91,6 +111,15 @@ am.billing = (function(){
                 bindItemBlurEvent();
                 bindAutoCompleterList();
             }
+        });
+    }
+
+    function bindAmoutCalcEvents(){
+        $(sel.discountInputfield).off('keyup').on('keyup', function(e){
+            calculateAmountDetails();
+        });
+        $(sel.paidAmt).off('keyup').on('keyup', function(e){
+            calculateAmountDetails();
         });
     }
 
@@ -129,7 +158,34 @@ am.billing = (function(){
             filterMode: filterMode
         });
     }
+
+    function bindSubmitEvent(){
+        $(sel.submitBtn).off('click').on('click', function(e){
+            makeTableClean();
+            var isValid = validateEntries();
+            if(isValid){
+                updateStock();
+                printBill();
+            }
+        });
+    }
+
      /*END: Binding events block*/
+
+     function fetchSettings(){
+        var queryObj = {
+            aQuery: "SELECT * from "+am.database.schema+".config;"
+        }
+        var callBackObj = am.core.getCallbackObject();
+		var request = am.core.getRequestData('../php/executequery.php', queryObj, 'POST');
+		callBackObj.bind('api_response', function(event, response){            
+            var data = JSON.parse(response);
+            dataObj.lastBillNumber = parseInt(data[0].last_selling_bill_no);
+            dataObj.currentBillNo = dataObj.lastBillNumber + 1;
+            setBillNumber();
+        });
+        am.core.call(request, callBackObj);
+     }
 
     function fetchAutoCompleterList(){
        var aCallBackObj = am.core.getCallbackObject();
@@ -139,6 +195,10 @@ am.billing = (function(){
             bindAutoCompleterList();
         });
         am.stock.core.fetchStockListFromDB(aCallBackObj);
+    }
+
+    function setBillNumber(){
+        $(sel.billNoField).val(dataObj.currentBillNo);
     }
 
     function parseResponse(){
@@ -205,7 +265,10 @@ am.billing = (function(){
         $(sel.totalSgstField).val(details.sgst);
         $(sel.totalValueField).val(details.value);
 
-    }
+        $(sel.totalInputField).val(details.value);
+        calculateAmountDetails();
+
+    }   
     /*END: Filler methods */
 
     /* START: getter methods */
@@ -214,7 +277,8 @@ am.billing = (function(){
             cgst: detail.cgst,
             sgst: detail.sgst,
             mrp: detail.new_selling_price || detail.unit_selling_price,
-            requireDetail: true
+            requireDetail: true,
+            roundOff: 2
         }
         return am.utils.calc.priceCalculator(options);
     }
@@ -227,7 +291,7 @@ am.billing = (function(){
         }else
             currSNo = 0;
         var newRowHtmlstr = '<tr>';
-                newRowHtmlstr += '<td><input type="text" class="aw ah only-b-border s-no" value="'+ (currSNo+1) +'" /></td>';
+                newRowHtmlstr += '<td><input type="text" class="aw ah only-b-border s-no" value="'+ (currSNo+1) +'" disabled /></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-itemid aw ah only-b-border item-id-field"/></span></td>';
                 newRowHtmlstr += '<td><input type="text" class="need-ac-item-desc need-focus aw ah only-b-border item-desc-field" data-identifier=""/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border count-field"/></td>';
@@ -246,6 +310,73 @@ am.billing = (function(){
     function getTotalDetails(){
         return calculateTotals();
     }
+
+    function getItemById(itemId){
+        itemId = itemId.trim();
+        var itemDetail = _.filter(dataObj.raw_stock, function(obj){
+            return (obj.item_id == itemId);
+        });
+        return itemDetail;
+    }
+
+    function getAllQTYFromTable(itemId){
+
+    }
+
+    function getTableData(){
+        var tableEntries = [];
+        _.each($(sel.tableBody+ ' tr'), function(aRow, index){
+            var aRowObj = {
+                itemId: $(aRow).find(sel.itemIdFieldElm).val().trim(),
+                itemDesc: $(aRow).find(sel.itemDescFieldElm).val().trim(),
+                itemQty: $(aRow).find(sel.itemQtyFieldElm).val().trim(),
+                itemPrice: $(aRow).find(sel.itemSellingPriceFieldElm).val().trim(),
+                itemCgstTax: $(aRow).find(sel.itemCgstTaxFieldElm).val().trim(),
+                itemCgstTaxVal: $(aRow).find(sel.itemCgstTaxValFieldElm).val().trim(),
+                itemSgstTax: $(aRow).find(sel.itemSgstTaxFieldElm).val().trim(),
+                itemSgstTaxVal: $(aRow).find(sel.itemSgstTaxValFieldElm).val().trim(),
+                itemValueField: $(aRow).find(sel.itemSellingValueFieldElm).val().trim(),
+                rowNumber: [index]
+            }
+            tableEntries.push(aRowObj);
+        });
+        return tableEntries;        
+    }
+
+    function getCleanTableData(){
+        var tableEntries = getTableData();
+        //do validation for, if same item exists at multiple rows, then combine that item count
+        var cleanedItemStorage = [];
+        var idArray = [];        
+        _.each(tableEntries, function(anItemDetail, index){
+            var theItemId = anItemDetail.itemId;
+            if(idArray.indexOf(theItemId) == -1){
+                cleanedItemStorage.push(anItemDetail);
+                idArray.push(theItemId);
+            }else{
+                _.each(cleanedItemStorage, function(validatedItemDetail, key){                    
+                    if(validatedItemDetail.itemId == theItemId){
+                        var thisItemDetail = getItemById(theItemId)[0];
+                        var count1 = parseInt(validatedItemDetail.itemQty);
+                        var count2 = parseInt(anItemDetail.itemQty);
+                        var countSummation = count1 + count2;                        
+
+                        var newSellingValue = parseInt(thisItemDetail.unit_selling_price) * countSummation;
+                        thisItemDetail.new_selling_price = newSellingValue;
+                        var priceDetails = getPriceDetails(thisItemDetail);
+
+                        validatedItemDetail.itemQty = countSummation;
+                        validatedItemDetail.itemPrice = priceDetails.price;
+                        validatedItemDetail.itemCgstTaxVal = priceDetails.cgstTaxValue;
+                        validatedItemDetail.itemSgstTaxVal = priceDetails.sgstTaxValue;                        
+                        validatedItemDetail.itemValueField = newSellingValue;
+                        validatedItemDetail.rowNumber.push(index);
+                    }                                                 
+                });
+            }
+        });
+        return cleanedItemStorage;
+    }
     /* END: getter methods */
 
     /*START: Helper's bloak */
@@ -256,23 +387,126 @@ am.billing = (function(){
             cgst: 0,
             sgst: 0,
             value: 0
-        };
+        };        
         _.each($(sel.itemQtyField), function(aField, index){
-            total.qty += parseFloat($(aField).val());
+            var aValue = $(aField).val() || 0;
+            total.qty += parseFloat(aValue);
         });
         _.each($(sel.itemSellingPriceField), function(aField, index){
-            total.price += parseFloat($(aField).val());
+            var aValue = $(aField).val() || 0;
+            total.price += parseFloat(aValue);
         });
         _.each($(sel.itemCgstTaxValField), function(aField, index){
-            total.cgst += parseFloat($(aField).val());
+            var aValue = $(aField).val() || 0;
+            total.cgst += parseFloat(aValue);
         });
         _.each($(sel.itemSgstTaxValField), function(aField, index){
-            total.sgst += parseFloat($(aField).val());
+            var aValue = $(aField).val() || 0;
+            total.sgst += parseFloat(aValue);
         });
         _.each($(sel.itemSellingValueField), function(aField, index){
-            total.value += parseFloat($(aField).val());
+            var aValue = $(aField).val() || 0;
+            total.value += parseFloat(aValue);
         });
         return total;
+    }
+
+    function calculateAmountDetails(){        
+        var total = parseFloat($(sel.totalInputField).val().trim());
+        var discountRate = parseFloat($(sel.discountInputfield).val().trim() || 0);
+        var subTotalAmt = total - discountRate;
+        $(sel.subTotalAmt).val(subTotalAmt);
+        var paidAmt = parseFloat($(sel.paidAmt).val().trim() || 0);
+        var balance = subTotalAmt - paidAmt;
+        $(sel.dueAmt).val(balance);
+    }
+
+    /* function validateEntries(){
+        var isValid = true;
+        var tableRows = $(sel.tableBody + " tr");
+        _.each(tableRows, function(aRow, index){
+            var itemId = $(aRow).find(sel.itemIdFieldElm).val().trim();
+            if(hasMultipleSameEntry(itemId)){
+                getAllQTYFromTable(itemId);
+            }
+            var sellingQty = $(aRow).find(sel.itemQtyFieldElm).val().trim();
+            sellingQty = parseInt(sellingQty);
+            var itemDetail = getItemById(itemId);
+            var qtyInStock = parseInt(itemDetail[0].count);
+            if(sellingQty > qtyInStock)
+                $(aRow).addClass('has-error');
+            else
+                $(aRow).removeClass('has-error');
+        });
+        if($(sel.tableBody).find('.has-error').length > 0)
+            isValid = false;
+        return isValid;
+    } */
+
+    function validateEntries(){
+        var isValid = true;
+        var tableData = getCleanTableData();
+        _.each(tableData, function(datum, index){
+            var sellingItemId = datum.itemId;
+            var sellingQty = parseInt(datum.itemQty);
+            var itemDetail = getItemById(sellingItemId);
+            var qtyInStock = parseInt(itemDetail[0].count);
+            if(sellingQty > qtyInStock)
+                updateErrorState('has-error', datum);
+            else
+                updateErrorState('no-error', datum);
+        });
+        if($(sel.tableBody).find('.has-error').length > 0)
+             isValid = false;
+        return isValid;
+    }
+
+    function hasMultipleSameEntry(itemId){
+        var entryCount = 0
+        _.each($(sel.tableBody + ' tr input' + sel.itemIdFieldElm), function(aCell, index){
+            if($(aCell).val().trim() == itemId)
+                entryCount++;
+        });
+        if(entryCount > 2)
+            return true;
+        else
+            return false;
+    }
+
+    function updateErrorState(action, data){
+        _.each(data.rowNumber, function(aRowNumber, index){    
+            switch(action){
+                case 'has-error':
+                    $(sel.tableBody + ' tr:eq('+aRowNumber+')').addClass('has-error');
+                    break;
+                case 'no-error':
+                    $(sel.tableBody + ' tr:eq('+aRowNumber+')').removeClass('has-error');
+                    break;
+            }
+        });
+    }
+
+    function updateStock(){
+
+    }
+
+    function printBill(){
+
+    }
+
+    function updateLastBillNoDB(){
+        var currentBillNo = dataObj.currentBillNo;
+        var queryObj = {
+            aQuery: "UPDATE "+am.database.schema+".config SET last_selling_bill_no='"+currentBillNo+"';"
+        }
+        var callBackObj = am.core.getCallbackObject();
+		var request = am.core.getRequestData('../php/executequery.php', queryObj, 'POST');
+		callBackObj.bind('api_response', function(event, response){
+            var data = JSON.parse(response);
+            dataObj.lastBillNumber = dataObj.currentBillNo;
+            dataObj.currentBillNo++;    
+        });
+        am.core.call(request, callBackObj);
     }
     /*END: Helper's bloak */
 
@@ -288,9 +522,24 @@ am.billing = (function(){
         $(sel.needFocus).removeClass(cls.needFocus);
     }
 
+    function makeTableClean(){ //will remove the row if it does not have item description
+         _.each($(sel.tableBody+ ' tr input.item-desc-field'), function(aCell, index){
+            var itemVal = $(aCell).val().trim();
+            if(itemVal == '')
+                $(aCell).closest('tr').remove();
+        });
+        resetSerialNumbers();
+        fillTotalDetails();
+    }
+
+    function resetSerialNumbers(){
+        _.each($(sel.tableBody+ ' tr input.s-no'), function(aCell, index){
+            $(aCell).val(index+1);
+        });
+    }
+
 
     return {
-        init: init,
-        dataObj: dataObj
+        init: init       
     }
 })();

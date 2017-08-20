@@ -8,3 +8,6 @@
 .stock-display-main-container .stock-table-container tbody tr.odd{
     background-color: rgba(128, 128, 128, 0.09);
 }
+.stock-table-container .filter-stock-table th{
+    padding: 5px 5px 5px 0;
+}
