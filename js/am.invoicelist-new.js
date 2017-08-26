@@ -273,15 +273,16 @@ am.invoicelist.edit = (function(){
                 newRowHtmlstr += '<td><input type="text" class="need-ac-partno aw ah only-b-border part-no-field" value="'+ aRowData[map.itemPartNo] +'"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border count-field" value="'+ aRowData[map.itemCount] +'"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border mrp-field" value="'+ aRowData[map.itemMrp] +'"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field" value="'+ aRowData[map.itemPrice] +'"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border selling-price-field" value="'+ aRowData[map.itemSellingPrice] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border discount-field" value="'+ aRowData[map.itemDiscount] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field" value="'+ aRowData[map.itemPrice] +'"/></td>';                
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border cgst-tax-field" value="'+ aRowData[map.itemCGSTTax] +'"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border sgst-tax-field" value="'+ aRowData[map.itemSGSTTax] +'"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border value-field" value="'+ aRowData[map.itemValue] +'"/></td>';              
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border value-field" value="'+ aRowData[map.itemValue] +'"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border selling-price-field" value="'+ aRowData[map.itemSellingPrice] +'"/></td>';              
             newRowHtmlstr += '</tr>';
             $(sel.editInvoiceTableBody).append(newRowHtmlstr);
         });
-        $(sel.editInvoiceTableBody).find('tr:last').find('.value-field').addClass('add-row');
+        $(sel.editInvoiceTableBody).find('tr:last').find('.selling-price-field').addClass('add-row');
         
     }
 

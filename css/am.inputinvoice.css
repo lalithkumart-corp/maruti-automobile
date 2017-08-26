@@ -36,9 +36,9 @@
 .input-invoice-main .table-container tbody .item-id-cell.new{
     background-color: rgba(14, 244, 129, 0.26);
 }
-.input-invoice-main .table-container tbody .count-field,
+.input-invoice-main .table-container tbody .mrp-field,
 .input-invoice-main .table-container tbody .price-field,
-.input-invoice-main .table-container tbody .value-field{
+.input-invoice-main .table-container tbody .selling-price-field{
     background-color: rgba(180, 179, 238, 0.38);
 }
 .input-invoice-main .effect-on-edit-invoice-popup{

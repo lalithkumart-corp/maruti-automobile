@@ -21,6 +21,7 @@ am.stock.input = (function(){
         itemName: 'in',
         itemPartNo: 'ip',
         itemMrp: 'im',
+        itemDiscount: 'id',
         itemPrice: 'ir',
         itemSellingPrice: 'is',
         itemCount: 'ic',
@@ -49,6 +50,7 @@ am.stock.input = (function(){
         brandNameField: '.brand-name-field',
         partNoField: '.part-no-field',
         mrpField: '.mrp-field',
+        discountField: '.discount-field',
         priceField: '.price-field',
         sellingPriceField: '.selling-price-field',
         cgstTaxField: '.cgst-tax-field',
@@ -94,6 +96,7 @@ am.stock.input = (function(){
 			var identifier = $(this).data('identifier');
 			deletePaymentRow(identifier);
 		});
+        bindTraverseEvents();
     }
 
     function editInvoicePopupController(){
@@ -137,6 +140,16 @@ am.stock.input = (function(){
         });
     }
 
+    function bindTraverseEvents(){
+        $(sel.tableBody).on('keydown', 'input:not(.add-row)', function(event){
+            var $this = $(event.target);
+            if (event.which == 13) {
+                event.preventDefault();
+                $(this).closest('td').next().find('input').focus();
+            }
+        });
+    }
+    
     function blurListener(thisRefer){        
         var itsParent = $(thisRefer).closest('tr');
         var itemVal = $(itsParent).find(sel.itemNameField).val().trim();
@@ -368,11 +381,12 @@ am.stock.input = (function(){
                 newRowHtmlstr += '<td><input type="text" class="need-ac-partno aw ah only-b-border part-no-field"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border count-field"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border mrp-field"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border selling-price-field"/></td>';                
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border discount-field"/></td>';
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border price-field"/></td>';                               
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border cgst-tax-field"/></td>';
                 newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border sgst-tax-field"/></td>';
-                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border add-row value-field"/></td>';              
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border value-field"/></td>';              
+                newRowHtmlstr += '<td><input type="number" class="aw ah only-b-border add-row selling-price-field"/></td>';
             newRowHtmlstr += '</tr>';
         return newRowHtmlstr;
     }
@@ -393,17 +407,18 @@ am.stock.input = (function(){
         var arr = [];
         _.each($(sel.tableBody+' tr'), function(aRow, index){
             var anObj = {
-                [map.itemId] : $(aRow).find('td:eq(1)').text(),
-                [map.isNewItem] : $(aRow).find('td:eq(1)').hasClass('new'),
-                [map.itemBrand] : $(aRow).find('td:eq(2) input').val(),
-                [map.itemName] : $(aRow).find('td:eq(3) input').val(),
-                [map.itemPartNo] : $(aRow).find('td:eq(4) input').val(),
-                [map.itemCount] : $(aRow).find('td:eq(5) input').val(),
-                [map.itemMrp]: $(aRow).find('td:eq(6) input').val(),
-                [map.itemPrice] : $(aRow).find('td:eq(7) input').val(),                
-                [map.itemSellingPrice] : $(aRow).find('td:eq(8) input').val(),
-                [map.itemCGSTTax] : $(aRow).find('td:eq(9) input').val(),
-                [map.itemSGSTTax] : $(aRow).find('td:eq(10) input').val()
+                [map.itemId] : $(aRow).find(sel.itemIdCell).text(),
+                [map.isNewItem] : $(aRow).find(sel.itemIdCell).hasClass('new'),
+                [map.itemBrand] : $(aRow).find(sel.brandNameField).val(),
+                [map.itemName] : $(aRow).find(sel.itemNameField).val(),
+                [map.itemPartNo] : $(aRow).find(sel.partNoField).val(),
+                [map.itemCount] : $(aRow).find(sel.countField).val(),
+                [map.itemMrp]: $(aRow).find(sel.mrpField).val(),
+                [map.itemDiscount]: $(aRow).find(sel.itemDiscount).val(),
+                [map.itemPrice] : $(aRow).find(sel.priceField).val(),                
+                [map.itemSellingPrice] : $(aRow).find(sel.sellingPriceField).val(),
+                [map.itemCGSTTax] : $(aRow).find(sel.cgstTaxField).val(),
+                [map.itemSGSTTax] : $(aRow).find(sel.sgstTaxField).val()
             };
             arr.push(anObj);
         });
@@ -468,23 +483,12 @@ am.stock.input = (function(){
     function afterStockUpdate(response){
         response = JSON.parse(response);
         if(response[0].status == true){
-            // am.popup.init({
-            //     title: 'STOCK - updated!',
-            //     desc: 'Stock has been updated Successfully !',
-            //     dismissBtnText: 'Ok'
-            // });
             helper.showSuccessAlert('stock', 'Items added to Stock Successfully!');
             setTimeout(function(){ //refresh will fetch the stcoklist from DB. But the DB has just now got updated, and so fetching with delay . (To prevent fetching the old list from DB)Making delay, to let the DB to be updated
                 if(am.common.currentPage == 'stockinput')
                     refresh();
             }, 500);
         }else{
-            // am.popup.init({
-            //     title: 'Error in Updating STOCK',
-            //     desc: 'Could not able to update the stock details ',
-            //     dismissBtnText: 'Ok'
-            // });
-            debugger;
             helper.showDangerAlert('stock', 'Error in Updating STOCK.');
         }         
     }
@@ -557,17 +561,18 @@ am.stock.input = (function(){
         var arr = [];
         _.each($(sel.tableBody+' tr'), function(aRow, index){
             var anObj = {
-                [map.itemId] : $(aRow).find('td:eq(1)').text(),
-                [map.itemBrand] : $(aRow).find('td:eq(2) input').val(),
-                [map.itemName] : $(aRow).find('td:eq(3) input').val(),
-                [map.itemPartNo] : $(aRow).find('td:eq(4) input').val(),
-                [map.itemCount] : $(aRow).find('td:eq(5) input').val(),
-                [map.itemMrp] : $(aRow).find('td:eq(6) input').val(),
-                [map.itemPrice] : $(aRow).find('td:eq(7) input').val(),
-                [map.itemSellingPrice] : $(aRow).find('td:eq(8) input').val(),
-                [map.itemCGSTTax] : $(aRow).find('td:eq(9) input').val(),
-                [map.itemSGSTTax] : $(aRow).find('td:eq(10) input').val(),
-                [map.itemValue]: $(aRow).find('td:eq(11) input').val()
+                [map.itemId] : $(aRow).find(sel.itemIdCell).text(),
+                [map.itemBrand] : $(aRow).find(sel.brandNameField).val(),
+                [map.itemName] : $(aRow).find(sel.itemNameField).val(),
+                [map.itemPartNo] : $(aRow).find(sel.partNoField).val(),
+                [map.itemCount] : $(aRow).find(sel.countField).val(),
+                [map.itemMrp] : $(aRow).find(sel.mrpField).val(),
+                [map.itemDiscount]: $(aRow).find(sel.discountField).val(),
+                [map.itemPrice] : $(aRow).find(sel.priceField).val(),
+                [map.itemSellingPrice] : $(aRow).find(sel.sellingPriceField).val(),
+                [map.itemCGSTTax] : $(aRow).find(sel.cgstTaxField).val(),
+                [map.itemSGSTTax] : $(aRow).find(sel.sgstTaxField).val(),
+                [map.itemValue]: $(aRow).find(sel.valueField).val()
             };
             arr.push(anObj);
         });
@@ -578,7 +583,7 @@ am.stock.input = (function(){
         var arr = [];
         _.each($(sel.paymentRow), function(aPayment, index){
             var anObj = {
-                pv: $(aPayment).find($(sel.paidAmt)).val(),
+                pv: $(aPayment).find($(sel.paidAmt)).val() || 0,
                 pm: $(aPayment).find($(sel.paymentMode)).val()
             };
             if($(aPayment).find($(sel.paymentDate)).length)
@@ -593,7 +598,7 @@ am.stock.input = (function(){
     function getTotalPaidAmt(){
         var price = 0;
         _.each($(sel.paymentRow), function(aPayment, index){
-            var aPrice = $(aPayment).find($(sel.paidAmt)).val();
+            var aPrice = $(aPayment).find($(sel.paidAmt)).val() || 0;
             aPrice = parseInt(aPrice);
             price += aPrice;            
         });
@@ -649,13 +654,14 @@ am.stock.input = (function(){
 
     var helper = {
         getInsertItemQuery: function(itemDetail){
-            var query = 'INSERT into '+ am.database.schema+ '.stock (item_id, item_brand, item_name, item_part_no, count, unit_mrp, unit_price, unit_selling_price, cgst, sgst) VALUES ("';
+            var query = 'INSERT into '+ am.database.schema+ '.stock (item_id, item_brand, item_name, item_part_no, count, unit_mrp, discount_percent, unit_price, unit_selling_price, cgst, sgst) VALUES ("';
             query += itemDetail[map.itemId] +  '", "';
             query += itemDetail[map.itemBrand] + '", "';
             query += itemDetail[map.itemName] + '", "';
             query += itemDetail[map.itemPartNo] + '", "';
             query += itemDetail[map.itemCount] + '", "';
             query += itemDetail[map.itemMrp] + '", "';
+            query += itemDetail[map.itemDiscount] + '", "';
             query += itemDetail[map.itemPrice] + '", "';
             query += itemDetail[map.itemSellingPrice] + '", "';
             query += itemDetail[map.itemCGSTTax] + '", "';
