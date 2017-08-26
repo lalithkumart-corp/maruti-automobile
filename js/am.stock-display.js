@@ -77,6 +77,8 @@ am.stock.view = (function(){
                         { "sWidth": "5%"},
                         { "sWidth": "5%"},
                         { "sWidth": "5%"},
+                        { "sWidth": "5%"},
+                        { "sWidth": "5%"},
                         { "sWidth": "5%"}
                     ],
                     drawCallback: function( settings ) { //for updating serial number

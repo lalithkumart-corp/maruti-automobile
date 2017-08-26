@@ -414,7 +414,7 @@ am.stock.input = (function(){
                 [map.itemPartNo] : $(aRow).find(sel.partNoField).val(),
                 [map.itemCount] : $(aRow).find(sel.countField).val(),
                 [map.itemMrp]: $(aRow).find(sel.mrpField).val(),
-                [map.itemDiscount]: $(aRow).find(sel.itemDiscount).val(),
+                [map.itemDiscount]: $(aRow).find(sel.discountField).val(),
                 [map.itemPrice] : $(aRow).find(sel.priceField).val(),                
                 [map.itemSellingPrice] : $(aRow).find(sel.sellingPriceField).val(),
                 [map.itemCGSTTax] : $(aRow).find(sel.cgstTaxField).val(),

@@ -4,6 +4,29 @@ am.stock.core = (function(){
     var dataObj = {
 
     };
+    var map = {
+        itemId: 'iid',
+        isNewItem: 'n',
+        itemBrand: 'ib',
+        itemName: 'in',
+        itemPartNo: 'ip',
+        itemMrp: 'im',
+        itemDiscount: 'id',
+        itemPrice: 'ir',
+        itemSellingPrice: 'is',
+        itemCount: 'ic',
+        itemCGSTTax: 'ict',
+        itemSGSTTax: 'ist',
+        itemValue: 'iv',
+
+        itemDesc: 'de',
+        itemQty: 'ic',
+        itemCgstTax: 'ict',
+        itemCgstTaxVal: 'ctv',
+        itemSgstTax: 'ist',
+        itemSgstTaxVal: 'stv',
+        itemValueField: 'iv'
+    };
     function fetchStockListFromDB(callBack){
         var query = {
             aQuery: 'SELECT * FROM '+am.database.schema+'.stock;'
@@ -19,6 +42,7 @@ am.stock.core = (function(){
         am.core.call(request, callBackObj);
     }
     return {
-        fetchStockListFromDB: fetchStockListFromDB
+        fetchStockListFromDB: fetchStockListFromDB,
+        map: map
     }
 })();

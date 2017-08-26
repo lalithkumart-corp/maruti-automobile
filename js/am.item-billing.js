@@ -9,6 +9,8 @@ am.billing = (function(){
         }
     };
     
+    var map = am.stock.core.map;
+
     var cls = {
         needACItemId: 'need-ac-itemid',
         needACBrand: 'need-ac-brand',
@@ -63,7 +65,7 @@ am.billing = (function(){
         subTotalAmt: '.billing-main-panel .amount-details .sub-total-amt',
         paidAmt: '.billing-main-panel .amount-details .paidAmt',
         dueAmt: '.billing-main-panel .amount-details .due-amt',
-        submitBtn: '.billing-main-panel .amount-details .billing-panel-submit-btn'
+        submitBtn: '.billing-main-panel .billing-panel-submit-btn'
     };
 
     function init(){                
@@ -83,6 +85,7 @@ am.billing = (function(){
         bindAddRowEvent();
         bindSubmitEvent();
         bindAmoutCalcEvents();
+        bindTraverseEvents();
         $(sel.billDateField).datepicker().datepicker("setDate", new Date());
     }
 
@@ -134,7 +137,7 @@ am.billing = (function(){
         var filterMode;
         switch(elmName){
             case 'itemid':
-                collections = $.map(dataObj.ac.itemIds, function (listItem) { return { value: listItem, data: { category: 'Brands' }}; });
+                collections = $.map(dataObj.ac.itemIds, function (listItem, index) { return { value: listItem, data: { category: 'ID',  identifier: index }}; });
                 selector = sel.needACItemId;
                 break;
             case 'desc':
@@ -159,13 +162,25 @@ am.billing = (function(){
         });
     }
 
+    function bindTraverseEvents(){
+        $(sel.tableBody).on('keydown', 'input:not(.add-row)', function(event){
+            var $this = $(event.target);
+            if (event.which == 13) {
+                event.preventDefault();
+                $(this).closest('td').next().find('input').focus();
+            }
+        });
+    }
+
     function bindSubmitEvent(){
         $(sel.submitBtn).off('click').on('click', function(e){
             makeTableClean();
             var isValid = validateEntries();
             if(isValid){
-                updateStock();
-                printBill();
+                var tableData = getCleanTableData();
+                var shortenedData = helper.doShorten(tableData);
+                updateStock(shortenedData);
+                printBill(shortenedData);
             }
         });
     }
@@ -204,21 +219,14 @@ am.billing = (function(){
     function parseResponse(){
         dataObj.ac.itemIds = [];
         dataObj.ac.descObj = {};
-        _.each(dataObj.raw_stock, function(anItem, index){
-            var aBrand = '', aDesc = '', aPartNo = '';
-            if(anItem.item_brand !== '' && dataObj.ac.brands.indexOf(anItem.item_brand) == -1)
-                aBrand = anItem.item_brand + '-';
-            if(anItem.item_name !== '' && dataObj.ac.brands.indexOf(anItem.item_name) == -1)
-                aDesc = anItem.item_name + '-';
-            if(anItem.item_part_no !== '' && dataObj.ac.brands.indexOf(anItem.item_part_no) == -1)
-                aPartNo = anItem.item_part_no + '-';
-            var descVal = aBrand + aDesc + aPartNo;
+        _.each(dataObj.raw_stock, function(anItem, index){            
+            var descVal = formItemDesc(anItem);
             descVal = descVal.substring(0, (descVal.length-1));
             dataObj.ac.descObj[index] = descVal;
             if(dataObj.ac.itemIds.indexOf(anItem.item_id) == -1)
                 dataObj.ac.itemIds.push(anItem.item_id);
         });        
-    }    
+    }
     
     function optionsSelectCallback(suggestion){
         if(_.isUndefined(suggestion.data.identifier))
@@ -234,9 +242,11 @@ am.billing = (function(){
     }
 
     /*START: Filler methods */
-    function fillRow(itemDetails, identifier){
+    function fillRow(itemDetails, identifier){        
         var currentRow = $(sel.tableBody + ' [data-identifier="'+identifier+'"]').closest('tr');
-        $(currentRow).find(sel.itemIdFieldElm).val(itemDetails.item_id);        
+        $(currentRow).find(sel.itemIdFieldElm).val(itemDetails.item_id);           
+        var descVal = formItemDesc(itemDetails);
+        $(currentRow).find(sel.itemDescFieldElm).val(descVal);          
         $(currentRow).find(sel.itemSgstTaxFieldElm).val(itemDetails.sgst);
         $(currentRow).find(sel.itemCgstTaxFieldElm).val(itemDetails.cgst);
         if($(currentRow).find(sel.itemQtyFieldElm).val().trim() == '')
@@ -344,7 +354,7 @@ am.billing = (function(){
     }
 
     function getCleanTableData(){
-        var tableEntries = getTableData();
+        var tableEntries = getTableData();        
         //do validation for, if same item exists at multiple rows, then combine that item count
         var cleanedItemStorage = [];
         var idArray = [];        
@@ -354,28 +364,48 @@ am.billing = (function(){
                 cleanedItemStorage.push(anItemDetail);
                 idArray.push(theItemId);
             }else{
-                _.each(cleanedItemStorage, function(validatedItemDetail, key){                    
+                _.each(cleanedItemStorage, function(validatedItemDetail, key){ 
                     if(validatedItemDetail.itemId == theItemId){
                         var thisItemDetail = getItemById(theItemId)[0];
-                        var count1 = parseInt(validatedItemDetail.itemQty);
-                        var count2 = parseInt(anItemDetail.itemQty);
-                        var countSummation = count1 + count2;                        
+                        if(!_.isUndefined(thisItemDetail)){
+                            var count1 = parseInt(validatedItemDetail.itemQty);
+                            var count2 = parseInt(anItemDetail.itemQty);
+                            var countSummation = count1 + count2;                        
 
-                        var newSellingValue = parseInt(thisItemDetail.unit_selling_price) * countSummation;
-                        thisItemDetail.new_selling_price = newSellingValue;
-                        var priceDetails = getPriceDetails(thisItemDetail);
+                            var newSellingValue = parseInt(thisItemDetail.unit_selling_price) * countSummation;
+                            thisItemDetail.new_selling_price = newSellingValue;
+                            var priceDetails = getPriceDetails(thisItemDetail);
 
-                        validatedItemDetail.itemQty = countSummation;
-                        validatedItemDetail.itemPrice = priceDetails.price;
-                        validatedItemDetail.itemCgstTaxVal = priceDetails.cgstTaxValue;
-                        validatedItemDetail.itemSgstTaxVal = priceDetails.sgstTaxValue;                        
-                        validatedItemDetail.itemValueField = newSellingValue;
+                            validatedItemDetail.itemQty = countSummation;
+                            validatedItemDetail.itemPrice = priceDetails.price;
+                            validatedItemDetail.itemCgstTaxVal = priceDetails.cgstTaxValue;
+                            validatedItemDetail.itemSgstTaxVal = priceDetails.sgstTaxValue;     
+                            validatedItemDetail.itemValueField = newSellingValue;                            
+                        }
                         validatedItemDetail.rowNumber.push(index);
                     }                                                 
                 });
             }
         });
         return cleanedItemStorage;
+    }
+
+    function getStockUpdateItemQuery(datum){
+        var query = 'UPDATE ' + am.database.schema + '.stock SET ';
+        query += 'count=' + getUpdatedCount(datum) + ' ';
+        query += 'WHERE item_id=' + datum[map.itemId];
+        query += '; ';
+        return query;
+    }
+    function getUpdatedCount(itemDetail){
+        var currentCount = itemDetail[map.itemCount];
+        currentCount = parseInt(currentCount);
+        var itemDetailInStock = _.filter(dataObj.raw_stock, function(obj){
+            return (obj.item_id == itemDetail[map.itemId]);
+        });
+        var countInDB = parseInt(itemDetailInStock[0].count);            
+        var newCount = countInDB - currentCount ;
+        return newCount;
     }
     /* END: getter methods */
 
@@ -449,12 +479,16 @@ am.billing = (function(){
         _.each(tableData, function(datum, index){
             var sellingItemId = datum.itemId;
             var sellingQty = parseInt(datum.itemQty);
-            var itemDetail = getItemById(sellingItemId);
-            var qtyInStock = parseInt(itemDetail[0].count);
-            if(sellingQty > qtyInStock)
+            var itemDetail = getItemById(sellingItemId)[0];
+            if(!_.isUndefined(itemDetail)){
+                var qtyInStock = parseInt(itemDetail.count);
+                if(sellingQty > qtyInStock)
+                    updateErrorState('has-error', datum);
+                else
+                    updateErrorState('no-error', datum);
+            }else{
                 updateErrorState('has-error', datum);
-            else
-                updateErrorState('no-error', datum);
+            }
         });
         if($(sel.tableBody).find('.has-error').length > 0)
              isValid = false;
@@ -486,11 +520,36 @@ am.billing = (function(){
         });
     }
 
-    function updateStock(){
-
+    function formItemDesc(data){
+        var aBrand = '', aDesc = '', aPartNo = '';
+        if(data.item_brand !== '')
+            aBrand = data.item_brand + '-';
+        if(data.item_name !== '')
+            aDesc = data.item_name + '-';
+        if(data.item_part_no !== '')
+            aPartNo = data.item_part_no + '-';
+        var descVal = aBrand + aDesc + aPartNo;
+        return descVal;
     }
 
-    function printBill(){
+    function updateStock(tableData){
+        var obj = {}, query = '';
+        _.each(tableData, function(datum, index){
+            query += getStockUpdateItemQuery(datum);
+        });
+        obj.multiQuery = 'true';
+        obj.aQuery = 'SET SQL_SAFE_UPDATES = 0;';
+        obj.aQuery += query;
+        obj.aQuery += 'SET SQL_SAFE_UPDATES = 1;';
+        var callBackObj = am.core.getCallbackObject();            
+        var request = am.core.getRequestData('../php/executequery.php', obj , 'POST');
+        callBackObj.bind('api_response', function(event, response){
+            handleStockUpdateResponse(response);            
+        });
+        am.core.call(request, callBackObj);
+    }
+
+    function printBill(tableData){
 
     }
 
@@ -508,6 +567,8 @@ am.billing = (function(){
         });
         am.core.call(request, callBackObj);
     }
+
+   
     /*END: Helper's bloak */
 
     function addRow(that, e){
@@ -538,6 +599,43 @@ am.billing = (function(){
         });
     }
 
+    function handleStockUpdateResponse(response){
+        response = JSON.parse(response);
+        if(response[0].status){
+            fetchAutoCompleterList();
+            clearEntries();
+            am.alert.success('Alert updated successfully!');
+        }else
+            couldNotUpdateStock();
+    }
+
+    function couldNotUpdateStock(){
+        am.alert.error('Alert could not be updated!');
+    }
+
+    function clearEntries(){
+        $(sel.tableBody).html(getRowData());
+        moveTabFocus();
+        bindAddRowEvent();
+        bindItemBlurEvent();
+    }
+
+    var helper = {
+        doShorten: function(data){   
+            var shortenedList = [];         
+            if(!_.isUndefined(data)){
+                _.each(data, function(datum, index){
+                    var obj = {};
+                    _.each(datum, function(aProp, key){
+                        var newKey = map[key] || key;
+                        obj[newKey] = aProp;
+                    });
+                    shortenedList.push(obj);
+                });
+            }
+            return shortenedList;
+        }
+    }
 
     return {
         init: init       

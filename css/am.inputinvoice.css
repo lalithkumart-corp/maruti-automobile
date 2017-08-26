@@ -5,7 +5,7 @@
     border: 1px solid;
     border-radius: 5px;
     height: 400px;
-    overflow-x: hidden;
+    overflow-x: auto;
     margin-top: 20px;
     padding: 0;
 }
