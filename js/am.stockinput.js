@@ -192,6 +192,7 @@ am.stock.input = (function(){
             totalValue += parseFloat($(aRow).find(sel.valueField).val() || 0);
         });
         $(sel.actualAmt).val(totalValue);
+        calculateAmount();
     }
 
     function bindAddRowEvent(){
@@ -557,6 +558,15 @@ am.stock.input = (function(){
         return returnVal;
     }
 
+    function cleanItemJSON(itemJson){
+        var cleanedItemJson = []
+        _.each(itemJson, function(anItemDetail, index){
+            if(anItemDetail[map.itemName] !== '')
+                cleanedItemJson.push(anItemDetail);
+        });
+        return cleanedItemJson;
+    }
+
     function getItemsJson(){
         var arr = [];
         _.each($(sel.tableBody+' tr'), function(aRow, index){
@@ -576,6 +586,7 @@ am.stock.input = (function(){
             };
             arr.push(anObj);
         });
+        arr = cleanItemJSON(arr);
         return arr;
     }
 
